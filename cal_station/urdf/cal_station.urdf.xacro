@@ -2,7 +2,7 @@
 <!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com)
      Commit Version: 1.5.1-0-g916b5db  Build Version: 1.5.7152.31018
      For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
-<robot name="cal_station">
+<robot xmlns:xacro="http://wiki.ros.org/xacro" name="cal_station">
 
   <!-- LINKS BELOW-->
   <link name="Base">
@@ -82,7 +82,7 @@
   <link name="Mount">
     <inertial>
       <origin
-        xyz="-1.1102E-16 -0.16473 0.052722"
+        xyz="0 0 0"
         rpy="0 0 0" />
       <mass value="0.011078" />
       <inertia
@@ -129,7 +129,7 @@
     <axis
       xyz="0 1 0" />
     <limit
-      lower="0"
+      lower="0.03"
       upper="0.1818"
       effort="1000"
       velocity="0" />
@@ -153,4 +153,11 @@
       effort="1000"
       velocity="0" />
   </joint>
+  <!-- Realsense Cam -->
+    <xacro:arg name="use_nominal_extrinsics" default="False" />
+    <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro"/>
+
+    <sensor_d435 parent="Mount">
+      <origin xyz="0 -0.00379 0.01339" rpy="0 -1.57079632679 1.57079632679"/>
+    </sensor_d435>
 </robot>

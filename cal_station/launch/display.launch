@@ -6,7 +6,7 @@
     default="True" />
   <param
     name="robot_description"
-    textfile="$(find cal_station)/urdf/cal_station.urdf" />
+    command="xacro --inorder '$(find cal_station)/urdf/cal_station.urdf.xacro'" />
   <param
     name="use_gui"
     value="$(arg gui)" />
