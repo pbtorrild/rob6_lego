@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com)
+     Commit Version: 1.5.1-0-g916b5db  Build Version: 1.5.7152.31018
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot name="cal_station">
+
+  <!-- LINKS BELOW-->
+  <link name="Base">
+    <inertial>
+      <origin
+        xyz="-0.06146 -0.00046784 0.0033497"
+        rpy="0 0 0" />
+      <mass
+        value="0.75425" />
+      <inertia
+        ixx="0.00249"
+        ixy="-3.0378E-06"
+        ixz="-0.00059244"
+        iyy="0.0059122"
+        iyz="-3.8555E-06"
+        izz="0.0063221" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://cal_station/meshes/Base.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://cal_station/meshes/Base.STL" />
+      </geometry>
+    </collision>
+
+
+  </link>
+  <link name="Arm">
+    <inertial>
+      <origin
+        xyz="-0.10455 -0.047134 -9.8131E-08"
+        rpy="0 0 0" />
+      <mass value="0.097342" />
+      <inertia
+        ixx="7.3209E-06"
+        ixy="3.8018E-08"
+        ixz="1.2028E-09"
+        iyy="0.00048229"
+        iyz="2.9935E-12"
+        izz="0.00048222" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0.00214  0.060701 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://cal_station/meshes/Arm.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://cal_station/meshes/Arm.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+
+  <link name="Mount">
+    <inertial>
+      <origin
+        xyz="-1.1102E-16 -0.16473 0.052722"
+        rpy="0 0 0" />
+      <mass value="0.011078" />
+      <inertia
+        ixx="1.7417E-06"
+        ixy="-5.3872E-22"
+        ixz="1.6451E-22"
+        iyy="3.7356E-06"
+        iyz="-9.0839E-22"
+        izz="3.2918E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0.14992 -0.060701"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://cal_station/meshes/Mount.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://cal_station/meshes/Mount.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+<!-- JOINTS BELOW -->
+
+  <joint
+    name="Arm_j"
+    type="prismatic">
+    <origin
+      xyz="-0.00214 0 0"
+      rpy="1.5708 0 0" />
+    <parent
+      link="Base" />
+    <child
+      link="Arm" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="0"
+      upper="0.1818"
+      effort="1000"
+      velocity="0" />
+  </joint>
+
+  <joint
+    name="Mount_j"
+    type="prismatic">
+    <origin
+      xyz="0 0 0"
+      rpy="1.5708 1.5708 0" />
+    <parent
+      link="Arm" />
+    <child
+      link="Mount" />
+    <axis
+      xyz="0 -1 0" />
+    <limit
+      lower="0"
+      upper="0.170"
+      effort="1000"
+      velocity="0" />
+  </joint>
+</robot>
