@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>solution</name>
+  <version>0.0.0</version>
+  <description>The package containing the solution for the ROB6
+    zero-point-calibration project </description>
+
+    <maintainer email="ptorri17@student.aau.dk">Peter Birk Torrild</maintainer>
+
+    <license>Free to use</license>
+
+    <author email="vkulda17@student.aau.dk">Violeta Kuldaite</author>
+    <author email="psaren17@student.aau.dk">Peter Tybjerg Sørensen</author>
+    <author email="fsleza17@student.aau.dk">Filip Slezak</author>
+    <author email="jbjerr17@student.aau.dk">Jasper Bjerregaard</author>
+    <author email="clfm17@student.aau.dk">Casper Fløe Mikkelsen</author>
+    <author email="ptorri17@student.aau.dk">Peter Birk Torrild</author>
+
+
+  <!-- Url tags are optional, but multiple are allowed, one per tag -->
+  <!-- Optional attribute type can be: website, bugtracker, or repository -->
+  <!-- Example: -->
+  <!-- <url type="website">http://wiki.ros.org/solution</url> -->
+
+
+  <!-- Author tags are optional, multiple are allowed, one per tag -->
+  <!-- Authors do not have to be maintainers, but could be -->
+  <!-- Example: -->
+  <!-- <author email="jane.doe@example.com">Jane Doe</author> -->
+
+
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>image_geometry</build_depend>
+  <build_depend>image_transport</build_depend>
+  <build_depend>message_filters</build_depend>
+  <build_depend>nav_msgs</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>tf2</build_depend>
+  <build_depend>tf2_ros</build_depend>
+  <build_depend>message_generation</build_depend>
+
+
+  <build_export_depend>geometry_msgs</build_export_depend>
+  <build_export_depend>image_geometry</build_export_depend>
+  <build_export_depend>image_transport</build_export_depend>
+  <build_export_depend>message_filters</build_export_depend>
+  <build_export_depend>nav_msgs</build_export_depend>
+  <build_export_depend>roscpp</build_export_depend>
+  <build_export_depend>rospy</build_export_depend>
+  <build_export_depend>std_msgs</build_export_depend>
+  <build_export_depend>sensor_msgs</build_export_depend>
+  <build_export_depend>tf2</build_export_depend>
+  <build_export_depend>tf2_ros</build_export_depend>
+  <build_export_depend>message_generation</build_export_depend>
+
+
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>image_geometry</exec_depend>
+  <exec_depend>image_transport</exec_depend>
+  <exec_depend>message_filters</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>roscpp</exec_depend>
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>tf2</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>message_generation</exec_depend>
+
+  <!-- used for camera -->
+  <exec_depend>realsense2_camera</exec_depend>
+  <exec_depend>cv_bridge</exec_depend>
+
+  <!-- used for msg generation -->
+  <build_depend>message_generation</build_depend>
+  <build_depend>cv_bridge</build_depend>
+  <exec_depend>message_runtime</exec_depend>
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+
+  </export>
+</package>
