@@ -1,0 +1,10 @@
+<launch>
+
+  <!-- the self made files -->
+  <param name="sample_size" type="double" value="3" />
+  <param name="file_path" type="str" value="/home/peter/Desktop" />
+  <param name="file_name" type="str" value="test.csv" />
+  <param name="decimal_separator" type="str" value=";" />
+  <node pkg="solution" type="data_extractor" name="data_extractor" output="screen"></node>
+
+</launch>
