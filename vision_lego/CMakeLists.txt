@@ -162,18 +162,15 @@ include_directories(
 ######################################################################################
 
 add_executable(marker_detect          src/marker_detect.cpp)
-add_executable(marker_detection_old     src/marker_detection_old.cpp)
 add_executable(data_extractor          src/data_extractor.cpp)
 
 
 add_dependencies(marker_detect      ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(marker_detection_old   ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(data_extractor      ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 
 
 target_link_libraries(marker_detect     ${catkin_LIBRARIES})
-target_link_libraries(marker_detection_old  ${catkin_LIBRARIES})
 target_link_libraries(data_extractor     ${catkin_LIBRARIES})
 
 

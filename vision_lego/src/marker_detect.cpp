@@ -16,7 +16,7 @@
 
 #include <cv_bridge/cv_bridge.h>
 
-#include <solution/GetMarker.h>
+#include <vision_lego/GetMarker.h>
 
 class markers{
 private:
@@ -101,7 +101,7 @@ public:
     }
   }
 
-  bool service_get_marker(solution::GetMarker::Request &req,solution::GetMarker::Response &res)
+  bool service_get_marker(vision_lego::GetMarker::Request &req,vision_lego::GetMarker::Response &res)
 	{
     std::string path = req.path;
     cv::Mat marker;
