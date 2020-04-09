@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>solution</name>
+  <name>vision_lego</name>
   <version>0.0.0</version>
   <description>The package containing the solution for the ROB6
     zero-point-calibration project </description>
