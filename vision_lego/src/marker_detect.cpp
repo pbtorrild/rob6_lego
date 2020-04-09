@@ -4,9 +4,11 @@
 #include <sensor_msgs/image_encodings.h>
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2/LinearMath/Vector3.h>
+#include <tf2/LinearMath/Matrix3x3.h>
 #include <tf2_ros/transform_broadcaster.h>
 #include "tf2_ros/transform_listener.h"
 #include <geometry_msgs/TransformStamped.h>
+#include <vision_lego/TransformRPYStamped.h>
 
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -35,12 +37,12 @@ protected:
 
 public:
   ros::NodeHandle nh;
-  ros::Publisher pub = nh.advertise<geometry_msgs::TransformStamped>("tf/marker_frames", 1);
+  ros::Publisher pub = nh.advertise<vision_lego::TransformRPYStamped>("data/vision_data", 1);
 
-  void broadcast_frame(geometry_msgs::TransformStamped transformStamped) {
+  void broadcast_frame(geometry_msgs::TransformStamped transformStamped, vision_lego::TransformRPYStamped vision_data) {
     static tf2_ros::TransformBroadcaster br;
     br.sendTransform(transformStamped);
-    pub.publish(transformStamped);
+    pub.publish(vision_data);
   }
 
   void imageCallback(const sensor_msgs::CompressedImageConstPtr& msg)
@@ -96,7 +98,19 @@ public:
         frame.transform.rotation.y = q.y();
         frame.transform.rotation.z = q.z();
         frame.transform.rotation.w = q.w();
-        broadcast_frame(frame);
+        //calculate RPY from Quaterions
+        vision_lego::TransformRPYStamped vision_data;
+        vision_data.header=frame.header;
+        vision_data.child_frame_id=frame.child_frame_id;
+        vision_data.translation=frame.transform.translation;
+        double Y, P, R;
+        tf2::Matrix3x3 matrix(q);
+        matrix.getRPY(Y, P, R);
+        vision_data.orientation.Roll=R;
+        vision_data.orientation.Pitch=P;
+        vision_data.orientation.Yaw=Y;
+        broadcast_frame(frame,vision_data);
+
       }
     }
   }

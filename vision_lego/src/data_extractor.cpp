@@ -4,6 +4,7 @@
 
 //MSGs
 #include <geometry_msgs/TransformStamped.h>
+#include <vision_lego/TransformRPYStamped.h>
 
 //Prossesing
 #include <tf2/LinearMath/Quaternion.h>
@@ -52,20 +53,19 @@ void write_csv(float x,float y,float z,double R,double P,double Y) {
   }
 }
 
-void poseCallback(const geometry_msgs::TransformStampedConstPtr& msg)
+void poseCallback(const vision_lego::TransformRPYStampedConstPtr& msg)
 {
   //look up the xyz
-  float x = msg->transform.translation.x;
-  float y = msg->transform.translation.y;
-  float z = msg->transform.translation.z;
+  float x = msg->translation.x;
+  float y = msg->translation.y;
+  float z = msg->translation.z;
 
-  //calculate RPY
-  double Y, P, R;
-  tf2::Quaternion q(msg->transform.rotation.x,msg->transform.rotation.y,msg->transform.rotation.z,msg->transform.rotation.w);
-  tf2::Matrix3x3 matrix(q);
-  matrix.getRPY(Y, P, R);
+  //lookup RPY
+  double R = msg->orientation.Roll;
+  double P = msg->orientation.Pitch;
+  double Y = msg->orientation.Yaw;
 
-  //Wtrite to file
+  //Write to file
   write_csv(x,y,z,R,P,Y);
 }
 };
@@ -82,7 +82,7 @@ int main(int argc, char **argv)
   extractor.load_param();
 
   //import data from marker pose.
-  ros::Subscriber data_importer = extractor.nh.subscribe("tf/marker_msgs", 30, &data::poseCallback,&extractor);
+  ros::Subscriber data_importer = extractor.nh.subscribe("data/vision_data", 30, &data::poseCallback,&extractor);
 
   ros::spin();
 }
