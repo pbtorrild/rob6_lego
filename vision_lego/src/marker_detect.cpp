@@ -37,7 +37,7 @@ protected:
 
 public:
   ros::NodeHandle nh;
-  ros::Publisher pub = nh.advertise<vision_lego::TransformRPYStamped>("data/vision_data", 1);
+  ros::Publisher pub = nh.advertise<vision_lego::TransformRPYStamped>("data/vision_data", 100);
 
   void broadcast_frame(geometry_msgs::TransformStamped transformStamped, vision_lego::TransformRPYStamped vision_data) {
     static tf2_ros::TransformBroadcaster br;
@@ -71,7 +71,7 @@ public:
 
     std_msgs::Header header=msg->header;
     if (ids.size() > 0){
-      cv::aruco::estimatePoseSingleMarkers(corners, 0.0675, cameraMatrix, distCoeffs, rvecs, tvecs);
+      cv::aruco::estimatePoseSingleMarkers(corners, 0.05269, cameraMatrix, distCoeffs, rvecs, tvecs);
 
       for (int i = 0; i < ids.size(); i++) {
         geometry_msgs::TransformStamped frame;

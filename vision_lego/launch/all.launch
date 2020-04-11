@@ -1,14 +1,17 @@
 <launch>
   <!--Launch the cameras-->
-  <include file="$(find solution)/launch/cam.launch"/>
+  <include file="$(find vision_lego)/launch/cam.launch"/>
 
   <!--Launch the cal_station environment-->
   <include file="$(find cal_station)/launch/display.launch"/>
 
   <!-- the self made files -->
-  <node pkg="$(find solution)" type="marker_detect" name="marker_detect" output="screen"></node>
+  <node pkg="vision_lego" type="marker_detect" name="marker_detect" output="screen"></node>
 
-  <node pkg="$(find solution)" type="data_extractor" name="data_extractor" output="screen"></node>
+  <!-- Data extractor
+  <include file="$(find vision_lego)/launch/data_extractor.launch"/>
+-->
+
 
 
 </launch>
