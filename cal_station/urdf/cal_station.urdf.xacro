@@ -114,7 +114,7 @@
     </collision>
   </link>
 
-<!-- JOINTS BELOW -->
+<!-- JOINTS BELOW  0.13412-->
 
   <joint
     name="Arm_j"
@@ -129,7 +129,7 @@
     <axis
       xyz="0 1 0" />
     <limit
-      lower="0.03"
+      lower="0.13412"
       upper="0.1818"
       effort="1000"
       velocity="0" />

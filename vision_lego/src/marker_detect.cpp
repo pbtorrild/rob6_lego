@@ -24,20 +24,52 @@ class markers{
 private:
   // camera calibration, is found using http://docs.ros.org/melodic/api/sensor_msgs/html/msg/CameraInfo.html
   // and the topic /camera/color/came_info
-  cv::Mat cameraMatrix = (cv::Mat_<double>(3,3) << 614.7054443359375, 0.0, 315.4218444824219, 0.0, 614.9154052734375, 243.67068481445312, 0.0, 0.0, 1.0);
-  cv::Mat distCoeffs= (cv::Mat_<double>(1,5) << 0.0, 0.0, 0.0, 0.0, 0.0);
+  cv::Mat cameraMatrix;
+  cv::Mat distCoeffs;
   double to_degree = 180/3.14159265359;
   int num_markers=14;
   int marker_bits_size=4; //X by X bits
   cv::Ptr<cv::aruco::Dictionary> dictionary= cv::aruco::generateCustomDictionary(num_markers, marker_bits_size);
   cv::Ptr<cv::aruco::DetectorParameters> detectorParams = cv::aruco::DetectorParameters::create();
-
+  double marker_width;
 protected:
-
+  int cam_matrix_mode;
+  int corner_refinement_method;
 
 public:
   ros::NodeHandle nh;
   ros::Publisher pub = nh.advertise<vision_lego::TransformRPYStamped>("data/vision_data", 100);
+
+  void load_param()
+  {
+    //Load cornerRefinementMethod
+    ros::param::param<int>("/corner_refinement_method", corner_refinement_method, 1);
+    switch (corner_refinement_method) {
+      case 0: detectorParams->cornerRefinementMethod = cv::aruco::CORNER_REFINE_NONE;
+      case 1: detectorParams->cornerRefinementMethod = cv::aruco::CORNER_REFINE_SUBPIX;
+      case 2: detectorParams->cornerRefinementMethod = cv::aruco::CORNER_REFINE_CONTOUR;
+    }
+    //Set camera matrix bades on highres or low res mode
+    ros::param::param<int>("/cam_matrix_mode", cam_matrix_mode, 2);
+    switch (cam_matrix_mode) {
+      case 1: //high_res_default_matrix
+              cameraMatrix = (cv::Mat_<double>(3,3) << 922.05810546875, 0.0, 633.1328125, 0.0, 922.3731689453125, 365.50604248046875, 0.0, 0.0, 1.0);
+              distCoeffs= (cv::Mat_<double>(1,5) << 0.0, 0.0, 0.0, 0.0, 0.0);
+      case 2: //low_res_deafault_matrix
+              cameraMatrix = (cv::Mat_<double>(3,3) << 614.7054443359375, 0.0, 315.4218444824219, 0.0, 614.9154052734375, 243.67068481445312, 0.0, 0.0, 1.0);
+              distCoeffs= (cv::Mat_<double>(1,5) << 0.0, 0.0, 0.0, 0.0, 0.0);
+      case 3: //high_res_custom_matrix
+
+      case 4: //low_res_custom_matrix
+              cameraMatrix = (cv::Mat_<double>(3,3) << 610.751037, 0.0, 323.371090, 0.0, 610.304837,245.105395, 0.0, 0.0, 1.0);
+              distCoeffs= (cv::Mat_<double>(1,5) << 0.112719, -0.238286, 0.003201, 0.003401, 0.0);
+              ROS_WARN("low_res_custom_matrix in use");
+
+    }
+
+    ros::param::param<double>("/marker_width", marker_width, 0.0094);
+
+  }
 
   void broadcast_frame(geometry_msgs::TransformStamped transformStamped, vision_lego::TransformRPYStamped vision_data) {
     static tf2_ros::TransformBroadcaster br;
@@ -64,14 +96,13 @@ public:
     image.copyTo(imageCopy);
     std::vector<int> ids;
     std::vector<std::vector<cv::Point2f> > corners;
-    detectorParams->cornerRefinementMethod = cv::aruco::CORNER_REFINE_SUBPIX;
     cv::aruco::detectMarkers(imageCopy, dictionary, corners, ids,detectorParams);
     // if at least one marker detected
     std::vector<cv::Vec3d> rvecs, tvecs;
 
     std_msgs::Header header=msg->header;
     if (ids.size() > 0){
-      cv::aruco::estimatePoseSingleMarkers(corners, 0.05269, cameraMatrix, distCoeffs, rvecs, tvecs);
+      cv::aruco::estimatePoseSingleMarkers(corners, marker_width, cameraMatrix, distCoeffs, rvecs, tvecs);
 
       for (int i = 0; i < ids.size(); i++) {
         geometry_msgs::TransformStamped frame;
@@ -153,7 +184,8 @@ int main(int argc, char **argv)
 
   //Define class instance
   markers instance;
-
+  ros::Duration(5).sleep();
+  instance.load_param();
   //Setup publisher and subscriber
 
   ros::Subscriber sub = instance.nh.subscribe("/camera/color/image_raw/compressed", 30, &markers::imageCallback,&instance);

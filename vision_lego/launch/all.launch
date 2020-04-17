@@ -2,10 +2,15 @@
   <!--Launch the cameras-->
   <include file="$(find vision_lego)/launch/cam.launch"/>
 
-  <!--Launch the cal_station environment-->
+  <!--Launch the cal_station environment
   <include file="$(find cal_station)/launch/display.launch"/>
+  -->
+
 
   <!-- the self made files -->
+  <param name="cam_matrix_mode" type="int" value="4" />
+  <param name="corner_refinement_method" type="int" value= "3" />
+  <param name="marker_width" type="double" value="0.00940" />
   <node pkg="vision_lego" type="marker_detect" name="marker_detect" output="screen"></node>
 
   <!-- Data extractor
