@@ -22,6 +22,7 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
   OpenCV
   cv_bridge
+  dynamic_reconfigure
 )
 
 ## System dependencies are found with CMake's conventions
@@ -60,7 +61,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate messages in the 'msg' folder
  add_message_files(
    FILES
-
+   RPY.msg
+   TransformRPYStamped.msg
 
 
  )
@@ -78,10 +80,11 @@ find_package(catkin REQUIRED COMPONENTS
 #   Action2.action
 # )
 
-## Generate added messages and services with any dependencies listed here
+## Generate added messages and services with any depmessage_generationendencies listed here
  generate_messages(
    DEPENDENCIES
    #std_msgs #Other
+   geometry_msgs
  )
 
 ################################################

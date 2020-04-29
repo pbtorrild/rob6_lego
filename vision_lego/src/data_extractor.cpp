@@ -4,31 +4,49 @@
 
 //MSGs
 #include <geometry_msgs/TransformStamped.h>
+#include <vision_lego/TransformRPYStamped.h>
+
 
 //Prossesing
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2/LinearMath/Matrix3x3.h>
+#include <tf2_ros/transform_listener.h>
+#include <tf2_ros/message_filter.h>
 
 class data{
 private:
   std::string file_path;
   std::string file_name;
   std::string separator;
-  double sample_size;
-  double counter;
+  int32_t sample_size;
+  int32_t counter;
+
+
+  std::string target_frame_;
+  tf2_ros::Buffer buffer_;
+  tf2_ros::TransformListener tf2_;
 protected:
   std::ofstream file;
 
 
 public:
 ros::NodeHandle nh;
+//the frame tracker
+data():
+  tf2_(buffer_),  target_frame_("Base")
+  {
+
+  }
 void load_param()
 {
-  ros::param::param<std::string>("/file_path", file_path, "/home/peter/lego_ws/src/rob5_lego/zero_point_cal/markers/");
+  ros::param::param<std::string>("/file_path", file_path, "/home/peter/lego_ws/src/rob6_lego/vision_lego/markers/");
   ros::param::param<std::string>("/file_name", file_name, "csv_output.csv");
-  ros::param::param<std::string>("/decimal_separator", separator, ";");
-  ros::param::param<double>("/sample_size", sample_size, 1000);
-  ROS_INFO("Read parameters");
+  ros::param::param<std::string>("/separator", separator, ";");
+  ros::param::param<int32_t>("/sample_size", sample_size, 1000);
+  ROS_INFO("Read parameters!");
+  ROS_INFO("File Path: %s",file_path.c_str());
+  ROS_INFO("File Name: %s",file_name.c_str());
+  ROS_INFO("Sample Size: %d",sample_size);
 }
 
 void write_csv(float x,float y,float z,double R,double P,double Y) {
@@ -39,34 +57,69 @@ void write_csv(float x,float y,float z,double R,double P,double Y) {
     if (file.is_open()!=true) {
       file.open(file_path+file_name);
       ROS_INFO("Writing file: %s",file_name.c_str());
+      file << "x" << separator << "y" << separator << "z" << separator << "R" << separator << "P" << separator << "Y" <<std::endl;
+
     }
     //add data to line
     file << x << separator << y << separator << z << separator << R << separator << P << separator << Y <<std::endl;
     //add to counter
     counter++;
     //if we have the number of smaples specified close the file and say done
-    if(counter=sample_size){
+    if(counter==sample_size){
       file.close();
       ROS_INFO("File done");
+      ros::shutdown();
     }
   }
 }
 
-void poseCallback(const geometry_msgs::TransformStampedConstPtr& msg)
+void poseCallback(const vision_lego::TransformRPYStampedConstPtr& msg)
 {
   //look up the xyz
-  float x = msg->transform.translation.x;
-  float y = msg->transform.translation.y;
-  float z = msg->transform.translation.z;
+  float x = msg->translation.x;
+  float y = msg->translation.y;
+  float z = msg->translation.z;
 
-  //calculate RPY
-  double Y, P, R;
-  tf2::Quaternion q(msg->transform.rotation.x,msg->transform.rotation.y,msg->transform.rotation.z,msg->transform.rotation.w);
-  tf2::Matrix3x3 matrix(q);
-  matrix.getRPY(Y, P, R);
+  //lookup RPY
+  double R = msg->orientation.Roll;
+  double P = msg->orientation.Pitch;
+  double Y = msg->orientation.Yaw;
 
-  //Wtrite to file
+  //Write to file
   write_csv(x,y,z,R,P,Y);
+}
+void poseTransformCallback(const vision_lego::TransformRPYStampedConstPtr& msg) {
+  //wait to make sure pose is in the buffer
+    ros::Duration(0.20).sleep();
+    geometry_msgs::TransformStamped look_up;
+    bool transform_succes;
+    ros::Time stamp = msg->header.stamp;
+    //wait to make sure pose is in the buffer
+    ros::Duration(0.20).sleep();
+    try{
+       look_up = buffer_.lookupTransform( "Base",msg->child_frame_id,stamp);
+       transform_succes=true;
+    }
+    catch (tf2::TransformException &ex) {
+          ROS_WARN("%s",ex.what());
+         transform_succes=false;
+    }
+
+    //In order to simply fy i am only gonna look up the Z kooridiante
+    //because this is the oinly value we can vertify with the given setup.
+    //look up the xy from the msg
+    float x = msg->translation.x;
+    float y = msg->translation.y;
+    //We look up the translation here from the
+    float z = look_up.transform.translation.z;
+
+    //lookup RPY
+    double R = msg->orientation.Roll;
+    double P = msg->orientation.Pitch;
+    double Y = msg->orientation.Yaw;
+
+    //Write to file
+    write_csv(x,y,z,R,P,Y);
 }
 };
 
@@ -82,7 +135,7 @@ int main(int argc, char **argv)
   extractor.load_param();
 
   //import data from marker pose.
-  ros::Subscriber data_importer = extractor.nh.subscribe("tf/marker_msgs", 30, &data::poseCallback,&extractor);
+  ros::Subscriber data_importer = extractor.nh.subscribe("data/vision_data", 300, &data::poseCallback,&extractor);
 
   ros::spin();
 }
