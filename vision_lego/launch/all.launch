@@ -15,7 +15,7 @@
 
   <!-- Data extractor
   <include file="$(find vision_lego)/launch/data_extractor.launch"/>
--->
+  -->
 
 
 

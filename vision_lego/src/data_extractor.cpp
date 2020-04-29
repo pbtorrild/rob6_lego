@@ -5,6 +5,7 @@
 //MSGs
 #include <geometry_msgs/TransformStamped.h>
 #include <vision_lego/TransformRPYStamped.h>
+#include <vision_lego/MarkerFound.h>
 
 
 //Prossesing
@@ -21,12 +22,12 @@ private:
   int32_t sample_size;
   int32_t counter;
 
-
   std::string target_frame_;
   tf2_ros::Buffer buffer_;
   tf2_ros::TransformListener tf2_;
-protected:
   std::ofstream file;
+protected:
+
 
 
 public:
@@ -39,6 +40,7 @@ data():
   }
 void load_param()
 {
+
   ros::param::param<std::string>("/file_path", file_path, "/home/peter/lego_ws/src/rob6_lego/vision_lego/markers/");
   ros::param::param<std::string>("/file_name", file_name, "csv_output.csv");
   ros::param::param<std::string>("/separator", separator, ";");
@@ -62,6 +64,30 @@ void write_csv(float x,float y,float z,double R,double P,double Y) {
     }
     //add data to line
     file << x << separator << y << separator << z << separator << R << separator << P << separator << Y <<std::endl;
+    //add to counter
+    counter++;
+    //if we have the number of smaples specified close the file and say done
+    if(counter==sample_size){
+      file.close();
+      ROS_INFO("File done");
+      ros::shutdown();
+    }
+  }
+}
+
+void write_bool_csv(bool marker_found, std::string marker_id) {
+  //Test if the file is done already
+
+  if (counter<=sample_size) {
+    //Test if file is open otherwhice open
+    if (file.is_open()!=true) {
+      file.open(file_path+file_name);
+      ROS_INFO("Writing file: %s",file_name.c_str());
+      file << "marker_found" << separator << "marker_id" << std::endl;
+
+    }
+    //add data to line
+    file << marker_found << separator << marker_id << std::endl;
     //add to counter
     counter++;
     //if we have the number of smaples specified close the file and say done
@@ -121,7 +147,16 @@ void poseTransformCallback(const vision_lego::TransformRPYStampedConstPtr& msg) 
     //Write to file
     write_csv(x,y,z,R,P,Y);
 }
+
+void marker_foundCallback(const vision_lego::MarkerFoundConstPtr& msg)
+{
+  write_bool_csv(msg->marker_found,msg->marker_id);
+}
+
 };
+
+
+
 
 int main(int argc, char **argv)
 {
@@ -134,8 +169,11 @@ int main(int argc, char **argv)
   //load in parameters
   extractor.load_param();
 
-  //import data from marker pose.
+  //import data from marker pose
   ros::Subscriber data_importer = extractor.nh.subscribe("data/vision_data", 300, &data::poseCallback,&extractor);
+  ros::Subscriber data_importer2 = extractor.nh.subscribe("data/marker_found", 300, &data::marker_foundCallback,&extractor);
+
+
 
   ros::spin();
 }

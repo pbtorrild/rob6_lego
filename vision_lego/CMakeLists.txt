@@ -63,6 +63,7 @@ find_package(catkin REQUIRED COMPONENTS
    FILES
    RPY.msg
    TransformRPYStamped.msg
+   MarkerFound.msg
 
 
  )

@@ -8,7 +8,9 @@
 #include <tf2_ros/transform_broadcaster.h>
 #include "tf2_ros/transform_listener.h"
 #include <geometry_msgs/TransformStamped.h>
+
 #include <vision_lego/TransformRPYStamped.h>
+#include <vision_lego/MarkerFound.h>
 
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -39,7 +41,7 @@ protected:
 public:
   ros::NodeHandle nh;
   ros::Publisher pub = nh.advertise<vision_lego::TransformRPYStamped>("data/vision_data", 100);
-
+  ros::Publisher pub2 = nh.advertise<vision_lego::MarkerFound>("data/marker_found",100);
   void load_param()
   {
     //Load cornerRefinementMethod
@@ -75,6 +77,13 @@ public:
     static tf2_ros::TransformBroadcaster br;
     br.sendTransform(transformStamped);
     pub.publish(vision_data);
+  }
+
+  void marker_found(bool marker_found, std::string marker_id){
+    vision_lego::MarkerFound send;
+    send.marker_found = marker_found;
+    send.marker_id =marker_id;
+    pub2.publish(send);
   }
 
   void imageCallback(const sensor_msgs::CompressedImageConstPtr& msg)
@@ -141,9 +150,11 @@ public:
         vision_data.orientation.Pitch=P;
         vision_data.orientation.Yaw=Y;
         broadcast_frame(frame,vision_data);
-
+        //Send if and what marker is found
+        marker_found(true,frame_id);
       }
     }
+    else{ marker_found(false,"NO_MARKER_FOUND");}
   }
 
   bool service_get_marker(vision_lego::GetMarker::Request &req,vision_lego::GetMarker::Response &res)

@@ -2,8 +2,8 @@
 
   <!-- the self made files -->
   <param name="sample_size" type="int" value="1000" />
-  <param name="file_path" type="str" value="/home/peter/Desktop/distortion_test_data_with_calibration/" />
-  <param name="file_name" type="str" value="test_1_centre.cvs" />
+  <param name="file_path" type="str" value="/home/peter/Desktop/" />
+  <param name="file_name" type="str" value="detection_rate_test" />
   <param name="separator" type="str" value=";" />
   <node pkg="vision_lego" type="data_extractor" name="data_extractor" output="screen"></node>
 
