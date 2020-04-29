@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro"
+       name="ur5" >
+  <link name="world"/>
+  <xacro:arg name="transmission_hw_interface" default="hardware_interface/PositionJointInterface"/>
+  <!-- common stuff -->
+  <xacro:include filename="$(find ur_description)/urdf/common.gazebo.xacro"/>
+  <!-- ur5 -->
+  <xacro:include filename="$(find ur_description)/urdf/ur5.urdf.xacro"/>
+  <!-- arm -->
+  <xacro:arg name="kinematics_config" default="$(find ur_description)/config/ur5_default.yaml"/>
+  <xacro:ur5_robot prefix="" joint_limited="true" shoulder_pan_lower_limit="${0}" shoulder_pan_upper_limit="${2* pi}" shoulder_lift_lower_limit="${-pi}" shoulder_lift_upper_limit="${pi}" elbow_joint_lower_limit="${-pi}" elbow_joint_upper_limit="${pi}" wrist_1_lower_limit="${-pi}" wrist_1_upper_limit="${pi}" wrist_2_lower_limit="${-pi}" wrist_2_upper_limit="${pi}" wrist_3_lower_limit="${-pi}" wrist_3_upper_limit="${pi}" transmission_hw_interface="$(arg transmission_hw_interface)" kinematics_file="${load_yaml('$(arg kinematics_config)')}"/>
+
+  <joint name="world_joint" type="fixed">
+  <parent link="world"/>
+  <child link="base_link"/>
+  <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+  </joint>
+
+  <link name="tool0_controller"/>
+  <joint name="base_tool0_controller_floating_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="base"/>
+    <child link="tool0_controller"/>
+  </joint>
+
+  <!-- Gripper -->
+  <xacro:include filename="$(find lego_robot_description)/urdf/gripper.xacro" />
+
+  <joint name="end_effector" type="fixed">
+    <parent link="ee_link" />
+    <child link = "gripper_body" />
+    <origin xyz="0.06 0.0 0.0" rpy="0.0 -1.57079632679 1.57079632679" />
+  </joint>
+
+  <link name="TCP"/>
+  <joint name="set_tcp" type="fixed">
+    <parent link="gripper_body" />
+    <child link = "TCP" />
+    <origin xyz="0.0 -0.233 -0.01905" rpy="3.14159265359 1.57079632679 -1.57079632679" />
+  </joint>
+
+  <!-- Realsense Cam -->
+  <xacro:arg name="use_nominal_extrinsics" default="False" />
+  <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro"/>
+
+  <sensor_d435 parent="gripper_body">
+    <origin xyz="0  -0.1157 0.03799" rpy="0 0 -1.57079632679"/>
+  </sensor_d435>
+
+    <!-- Table -->
+  <xacro:include filename="$(find lego_robot_description)/urdf/table.xacro" />
+
+  <joint name="table_mount_robot" type="fixed">
+    <parent link="table" />
+    <child link = "world" />
+    <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+  </joint>
+
+</robot>
