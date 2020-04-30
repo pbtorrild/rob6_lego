@@ -20,6 +20,8 @@
 
 #include <geometry_msgs/TransformStamped.h>
 #include <geometry_msgs/Pose.h>
+#include <vision_lego/TransformRPYStamped.h>
+
 
 #include <message_filters/subscriber.h>
 
@@ -66,7 +68,7 @@ public:
     br.sendTransform(transformStamped);
   }
 
-  void tracker(geometry_msgs::TransformStamped msg){
+  void tracker(vision_lego::TransformRPYStamped msg){
     //Find frame in regard to world
 
     geometry_msgs::TransformStamped frame;
@@ -159,7 +161,7 @@ int main(int argc, char **argv) {
   //Define class intace
   tf_tracker instance;
 
-  ros::Subscriber sub = instance.nh.subscribe("tf/marker_frames", 1, &tf_tracker::tracker,&instance);
+  ros::Subscriber sub = instance.nh.subscribe("data/vision_data", 1, &tf_tracker::tracker,&instance);
 
   ros::AsyncSpinner spinner(1);
   spinner.start();
@@ -235,7 +237,7 @@ int main(int argc, char **argv) {
     bool success = false;
     target_pose.position.x = instance.avg_pos[0].translation.x;
     target_pose.position.y = instance.avg_pos[0].translation.y;
-    target_pose.position.z = instance.avg_pos[0].translation.z+0.20;
+    target_pose.position.z = instance.avg_pos[0].translation.z+0.25;
     target_pose.orientation.x=instance.avg_pos[0].rotation.x;
     target_pose.orientation.y=instance.avg_pos[0].rotation.y;
     target_pose.orientation.z=instance.avg_pos[0].rotation.z;
@@ -268,7 +270,7 @@ int main(int argc, char **argv) {
       move_group.plan(go_to_marker);
       move_group.move();
       target_pose.position.z = instance.avg_pos[0].translation.z+0.10045;
-      target_pose.position.y = instance.avg_pos[0].translation.y+0.1;
+      target_pose.position.y = instance.avg_pos[0].translation.y+0.093;
       target_pose.position.x = instance.avg_pos[0].translation.x+0.1;
       ROS_INFO("Corner 1");
     } while(ros::ok());
