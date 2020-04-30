@@ -159,7 +159,7 @@ int main(int argc, char **argv) {
   //Define class intace
   tf_tracker instance;
 
-  ros::Subscriber sub = instance.nh.subscribe("tf/marker_frames", 1, &tf_tracker::tracker,&instance);
+  ros::Subscriber sub = instance.nh.subscribe("data/vision_data", 1, &tf_tracker::tracker,&instance);
 
   ros::AsyncSpinner spinner(1);
   spinner.start();
@@ -203,7 +203,10 @@ int main(int argc, char **argv) {
     tf2::Transform corner2;
     tf2::Transform corner3;
     tf2::Transform corner4;
-    tf2::Transform goal_possition;
+    tf2::Transform base_marker;
+    tf2::Transform look;
+    tf2::Transform goal_position;
+
 
 
     corner1.setOrigin( tf2::Vector3(0.1,0.1,0.10045));
@@ -218,28 +221,37 @@ int main(int argc, char **argv) {
     corner4.setOrigin( tf2::Vector3(0.1,-0.1,0.10045));
     corner4.setRotation(tf2::Quaternion(0,0,0,1));
 
-    goal_possition.setOrigin(tf2::Vector3(target_pose.position.x,target_pose.position.y,target_pose.position.z));
-    goal_possition.setRotation(tf2::Quaternion(target_pose.orientation.x,target_pose.orientation.y,target_pose.orientation.z,target_pose.orientation.w));
+    look.setOrigin(tf2::Vector3(0,0,0.25));
+    look.setRotation(tf2::Quaternion(0,0,0,1));
 
-    tf2::Transform base_corner1;
-    tf2::Transform base_corner2;
-    tf2::Transform base_corner3;
-    tf2::Transform base_corner4;
+    base_marker.setOrigin(tf2::Vector3(instance.avg_pos[0].translation.x, instance.avg_pos[0].translation.y,instance.avg_pos[0].translation.z));
+    base_marker.setRotation(tf2::Quaternion(instance.avg_pos[0].rotation.x,instance.avg_pos[0].rotation.y,instance.avg_pos[0].rotation.z,instance.avg_pos[0].rotation.w));
 
-    goal_possition*=corner1;
+
+
+    goal_position = base_marker*look;
+
+
+
+
+
+    tf2::Transform corner[]={corner1, corner2, corner3, corner4};
 
 
 
 
     //Move close to marker
     bool success = false;
-    target_pose.position.x = instance.avg_pos[0].translation.x;
-    target_pose.position.y = instance.avg_pos[0].translation.y;
-    target_pose.position.z = instance.avg_pos[0].translation.z+0.20;
-    target_pose.orientation.x=instance.avg_pos[0].rotation.x;
-    target_pose.orientation.y=instance.avg_pos[0].rotation.y;
-    target_pose.orientation.z=instance.avg_pos[0].rotation.z;
-    target_pose.orientation.w=instance.avg_pos[0].rotation.w;
+
+    target_pose.position.x = goal_position.getOrigin().x();
+    target_pose.position.y = goal_position.getOrigin().y();
+    target_pose.position.z = goal_position.getOrigin().z();
+    target_pose.orientation.x=goal_position.getRotation().x();
+    target_pose.orientation.y=goal_position.getRotation().y();
+    target_pose.orientation.z=goal_position.getRotation().z();
+    target_pose.orientation.w=goal_position.getRotation().w();
+
+
     do {
       move_group.setPoseTarget(target_pose,"TCP");
       success = (move_group.plan(go_to_marker) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
@@ -248,7 +260,7 @@ int main(int argc, char **argv) {
 
 
     move_group.setGoalPositionTolerance(0.00001);
-    //prepare for cROS_INFO("Done");alibration
+    //prepare for calibration
     for (int i = 1; i <= 2; i++) {
       ROS_INFO("Starting Calibration (Part %d of 2)",i);
       ros::Duration(2.5).sleep();
@@ -263,55 +275,40 @@ int main(int argc, char **argv) {
     } while(instance.marker_found[0]==false && ros::ok());
 
 
-    do {
+/*    do {
       move_group.setPoseTarget(target_pose,"TCP");
       move_group.plan(go_to_marker);
       move_group.move();
-      target_pose.position.z = instance.avg_pos[0].translation.z+0.10045;
-      target_pose.position.y = instance.avg_pos[0].translation.y+0.1;
-      target_pose.position.x = instance.avg_pos[0].translation.x+0.1;
-      ROS_INFO("Corner 1");
-    } while(ros::ok());
-
-      ros::Duration(0.50).sleep();
+      target_pose.position.z = instance.avg_pos[0].translation.z+0.0492;
+      ROS_INFO("Done");
+    } while(ros::ok());*/
 
 
 
-    do {
-      move_group.setPoseTarget(target_pose,"TCP");
-      move_group.plan(go_to_marker);
-      move_group.move();
-      target_pose.position.z = instance.avg_pos[0].translation.z+0.10045;
-      target_pose.position.y = instance.avg_pos[0].translation.y-0.1;
-      target_pose.position.x = instance.avg_pos[0].translation.x+0.1;
-      ROS_INFO("Corner 2");
-    }while(ros::ok());
+    for (size_t i = 0; i < 4; i++) {
 
-    ros::Duration(0.50).sleep();
+  goal_position=base_marker*corner[i];
 
-    do {
-      move_group.setPoseTarget(target_pose,"TCP");
-      move_group.plan(go_to_marker);
-      move_group.move();
-      target_pose.position.z = instance.avg_pos[0].translation.z+0.10045;
-      target_pose.position.y = instance.avg_pos[0].translation.y-0.1;
-      target_pose.position.x = instance.avg_pos[0].translation.x-0.1;
-      ROS_INFO("Corner 3");
-    }while(ros::ok());
+  target_pose.position.x = goal_position.getOrigin().x();
+  target_pose.position.y = goal_position.getOrigin().y();
+  target_pose.position.z = goal_position.getOrigin().z();
+  target_pose.orientation.x=goal_position.getRotation().x();
+  target_pose.orientation.y=goal_position.getRotation().y();
+  target_pose.orientation.z=goal_position.getRotation().z();
+  target_pose.orientation.w=goal_position.getRotation().w();
 
+      do {
+        move_group.setPoseTarget(target_pose,"TCP");
+        move_group.plan(go_to_marker);
+        move_group.move();
+      //  base_marker.position.z = instance.avg_pos[0].translation.z;
+        //base_marker.position.y = instance.avg_pos[0].translation.y;
+        //base_marker.position.x = instance.avg_pos[0].translation.x;
+        ROS_INFO("Corner 1");
+      } while(ros::ok());
 
-  ros::Duration(0.50).sleep();
-
-    do {
-      move_group.setPoseTarget(target_pose,"TCP");
-      move_group.plan(go_to_marker);
-      move_group.move();
-      target_pose.position.z = instance.avg_pos[0].translation.z+0.10045;
-      target_pose.position.y = instance.avg_pos[0].translation.y+0.1;
-      target_pose.position.x = instance.avg_pos[0].translation.x-0.1;
-      ROS_INFO("Test2 done");
-    }while(ros::ok());
-
+      ros::Duration(0.5).sleep();
+  }
 
 
 
