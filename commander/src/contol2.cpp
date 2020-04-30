@@ -301,9 +301,7 @@ int main(int argc, char **argv) {
         move_group.setPoseTarget(target_pose,"TCP");
         move_group.plan(go_to_marker);
         move_group.move();
-      //  base_marker.position.z = instance.avg_pos[0].translation.z;
-        //base_marker.position.y = instance.avg_pos[0].translation.y;
-        //base_marker.position.x = instance.avg_pos[0].translation.x;
+
         ROS_INFO("Corner 1");
       } while(ros::ok());
 
