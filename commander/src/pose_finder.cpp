@@ -105,7 +105,7 @@ public:
     transformStamped.transform=transform;
     br.sendTransform(transformStamped);
   }
-  
+
 
   void tracker(vision_lego::TransformRPYStamped msg){
     //Find frame in regard to world
@@ -201,7 +201,7 @@ int main(int argc, char **argv) {
   //Define class intace
   tf_tracker instance;
   instance.load_param();
-  ros::Duration(5).sleep();
+  ros::Duration(3).sleep();
   ros::Subscriber sub = instance.nh.subscribe("data/vision_data", 1, &tf_tracker::tracker,&instance);
 
 
