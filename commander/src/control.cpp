@@ -54,8 +54,6 @@ public:
 
   }
   ros::NodeHandle nh;
-  ros::Publisher pub_latest = nh.advertise<geometry_msgs::TransformStamped>("data/markers/latest_transform", 5);
-  ros::Publisher pub_avg = nh.advertise<geometry_msgs::TransformStamped>("data/markers/running_avg_transform", 5);
 
   void load_param() {
     ros::param::param<int>("/num_markers", num_markers, 14);
@@ -79,7 +77,7 @@ public:
 
    //Get frame id as int
    std::string frame_id =msg.child_frame_id;
-   frame_id.erase(0,10);
+   frame_id.erase(0,11);
    int id_num = std::stoi(frame_id);
    //read avg translation
    avg[id_num]=msg;
@@ -90,7 +88,7 @@ public:
 
    //Get frame id as int
    std::string frame_id =msg.child_frame_id;
-   frame_id.erase(0,6);
+   frame_id.erase(0,7);
    int id_num = std::stoi(frame_id);
    //read latest translation
    latest[id_num]=msg;
@@ -107,6 +105,10 @@ int main(int argc, char **argv) {
   ros::init(argc, argv, "Commander");
   //Define class intace
   tf_tracker instance;
+
+  instance.load_param();
+  ros::Duration(5).sleep();
+
 
   ros::Subscriber sub_latest = instance.nh.subscribe("data/markers/latest_transform", 1, &tf_tracker::latest_transform,&instance);
   ros::Subscriber sub_avg = instance.nh.subscribe("data/markers/running_avg", 1, &tf_tracker::running_avg,&instance);
@@ -134,11 +136,11 @@ int main(int argc, char **argv) {
     move_group.setJointValueTarget(joint_group_positions);
     move_group.plan(search);
     move_group.move();
-    joint_group_positions[0] = 2*M_PI-0.01;
+    joint_group_positions[0] = M_PI-0.01;
     move_group.setJointValueTarget(joint_group_positions);
     move_group.plan(search);
     move_group.move();
-  } while(instance.marker_found[0]==false && ros::ok());
+  } while(instance.marker_found[0]!=true && ros::ok());
     ROS_INFO("Found marker with id: 0");
 
   //HOW TO ACCES TF DATA FOR THE MARKE IR2 WORLD
@@ -158,13 +160,20 @@ int main(int argc, char **argv) {
     target_pose.orientation.z=instance.latest[0].transform.rotation.z;
     target_pose.orientation.w=instance.latest[0].transform.rotation.w;
     do {
-      move_group.setPoseTarget(target_pose,"camera_color_frame");
+      move_group.setPoseTarget(target_pose,"TCP");
       success = (move_group.plan(go_to_marker) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
       move_group.move();
-    } while(success=false && instance.avg_marker_found[0]==false && ros::ok());
+    } while(success=false && ros::ok());
 
     ROS_INFO("Calibrating based on avg pos");
 
+    do {
+      move_group.setPoseTarget(target_pose,"TCP");
+      success = (move_group.plan(go_to_marker) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+      move_group.move();
+    } while( instance.avg_marker_found[0]==false && ros::ok());
+
+    ROS_INFO("Done Calibrating");
     do {
       move_group.setPoseTarget(target_pose,"TCP");
       move_group.plan(go_to_marker);

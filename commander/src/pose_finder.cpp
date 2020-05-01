@@ -50,7 +50,7 @@ public:
 
   bool num_markers_found;
   tf_tracker():
-  tf2_(buffer_),  target_frame_("world")
+  tf2_(buffer_),  target_frame_("base_link")
   {
 
   }
@@ -95,7 +95,7 @@ public:
 
   void broadcast_frame(geometry_msgs::Transform transform, int id_num) {
     std::string str = std::to_string(id_num);
-    std::string frame_id = "world_marker_"+str;
+    std::string frame_id = "avg_marker_"+str;
     static tf2_ros::TransformBroadcaster br;
     geometry_msgs::TransformStamped transformStamped;
 
@@ -105,6 +105,7 @@ public:
     transformStamped.transform=transform;
     br.sendTransform(transformStamped);
   }
+  
 
   void tracker(vision_lego::TransformRPYStamped msg){
     //Find frame in regard to world
@@ -114,7 +115,7 @@ public:
     //wait to make sure pose is in the buffer
     ros::Duration(0.20).sleep();
     try{
-       frame = buffer_.lookupTransform( "world",msg.child_frame_id,msg.header.stamp);
+       frame = buffer_.lookupTransform( "base_link",msg.child_frame_id,msg.header.stamp);
        transform_succes=true;
     }
 

@@ -46,13 +46,16 @@ public:
     ros::param::param<int>("/num_markers", num_markers, 14);
     ros::param::param<int>("/marker_bits_size", marker_bits_size, 4);
     dictionary = cv::aruco::generateCustomDictionary(num_markers, marker_bits_size);
-    
+
     //Load cornerRefinementMethod
     ros::param::param<int>("/corner_refinement_method", corner_refinement_method, 1);
     switch (corner_refinement_method) {
       case 0: detectorParams->cornerRefinementMethod = cv::aruco::CORNER_REFINE_NONE;
+      break;
       case 1: detectorParams->cornerRefinementMethod = cv::aruco::CORNER_REFINE_SUBPIX;
+      break;
       case 2: detectorParams->cornerRefinementMethod = cv::aruco::CORNER_REFINE_CONTOUR;
+      break;
     }
     //Set camera matrix bades on highres or low res mode
     ros::param::param<int>("/cam_matrix_mode", cam_matrix_mode, 2);
@@ -60,15 +63,18 @@ public:
       case 1: //high_res_default_matrix
               cameraMatrix = (cv::Mat_<double>(3,3) << 922.05810546875, 0.0, 633.1328125, 0.0, 922.3731689453125, 365.50604248046875, 0.0, 0.0, 1.0);
               distCoeffs= (cv::Mat_<double>(1,5) << 0.0, 0.0, 0.0, 0.0, 0.0);
+              break;
       case 2: //low_res_deafault_matrix
               cameraMatrix = (cv::Mat_<double>(3,3) << 614.7054443359375, 0.0, 315.4218444824219, 0.0, 614.9154052734375, 243.67068481445312, 0.0, 0.0, 1.0);
               distCoeffs= (cv::Mat_<double>(1,5) << 0.0, 0.0, 0.0, 0.0, 0.0);
+              break;
       case 3: //high_res_custom_matrix
-
+              break;
       case 4: //low_res_custom_matrix
               cameraMatrix = (cv::Mat_<double>(3,3) << 610.751037, 0.0, 323.371090, 0.0, 610.304837,245.105395, 0.0, 0.0, 1.0);
               distCoeffs= (cv::Mat_<double>(1,5) << 0.112719, -0.238286, 0.003201, 0.003401, 0.0);
               ROS_WARN("low_res_custom_matrix in use");
+              break;
 
     }
 
