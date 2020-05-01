@@ -27,9 +27,9 @@ private:
   cv::Mat cameraMatrix;
   cv::Mat distCoeffs;
   double to_degree = 180/3.14159265359;
-  int num_markers=14;
-  int marker_bits_size=4; //X by X bits
-  cv::Ptr<cv::aruco::Dictionary> dictionary= cv::aruco::generateCustomDictionary(num_markers, marker_bits_size);
+  int num_markers;
+  int marker_bits_size; //X by X bits
+  cv::Ptr<cv::aruco::Dictionary> dictionary;
   cv::Ptr<cv::aruco::DetectorParameters> detectorParams = cv::aruco::DetectorParameters::create();
   double marker_width;
 protected:
@@ -42,6 +42,11 @@ public:
 
   void load_param()
   {
+    //load marker relevant information
+    ros::param::param<int>("/num_markers", num_markers, 14);
+    ros::param::param<int>("/marker_bits_size", marker_bits_size, 4);
+    dictionary = cv::aruco::generateCustomDictionary(num_markers, marker_bits_size);
+    
     //Load cornerRefinementMethod
     ros::param::param<int>("/corner_refinement_method", corner_refinement_method, 1);
     switch (corner_refinement_method) {

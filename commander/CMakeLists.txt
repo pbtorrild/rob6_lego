@@ -138,17 +138,17 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(         contol2          src/contol2.cpp)
-add_executable(         tf_sub2          src/tf_sub2.cpp)
-add_executable(         test_this2     src/test_this2.cpp)
+add_executable(         control          src/control.cpp)
+add_executable(         pose_finder          src/pose_finder.cpp)
 
-add_dependencies(       contol2          ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(       tf_sub2          ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(       test_this2     ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-target_link_libraries(  contol2          ${catkin_LIBRARIES})
-target_link_libraries(  tf_sub2          ${catkin_LIBRARIES})
-target_link_libraries(  test_this2     ${catkin_LIBRARIES})
+add_dependencies(       control          ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(       pose_finder          ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+
+target_link_libraries(  control          ${catkin_LIBRARIES})
+target_link_libraries(  pose_finder          ${catkin_LIBRARIES})
+
 
 #############
 ## Install ##
