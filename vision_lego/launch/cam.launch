@@ -9,7 +9,7 @@
 
   <arg name="depth_width"         default="640"/>
   <arg name="depth_height"        default="480"/>
-  <arg name="enable_depth"        default="false"/>
+  <arg name="enable_depth"        default="true"/>
 
   <arg name="infra_width"         default="640"/>
   <arg name="infra_height"        default="480"/>
@@ -29,7 +29,7 @@
   <arg name="enable_gyro"         default="false"/>
   <arg name="enable_accel"        default="false"/>
 
-  <arg name="enable_pointcloud"   default="false"/>
+  <arg name="enable_pointcloud"   default="true"/>
   <arg name="enable_sync"         default="true"/>
   <arg name="align_depth"         default="true"/>
 
