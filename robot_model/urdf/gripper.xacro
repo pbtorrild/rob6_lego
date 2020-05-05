@@ -2,12 +2,12 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ur5">
   <link name="gripper_body">
     <inertial>
-      <origin xyz="2.9342E-05 -0.044291 0.00032345" rpy="0 0 0"/>
-      <mass value="0.47636"/>
-      <inertia ixx="0.00034357" ixy="-3.8819E-08" ixz="3.6487E-08" iyy="0.00014964" iyz="7.9271E-06" izz="0.00038471"/>
+      <origin rpy="0 0 0" xyz="2.1478E-05 -0.056983 0.0015312"/>
+      <mass value="0.44225"/>
+      <inertia ixx="0.00031483" ixy="-3.882E-08" ixz="3.7547E-08" iyy="0.00016784" iyz="6.6712E-06" izz="0.00035617"/>
     </inertial>
     <visual>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
         <mesh filename="package://robot_model/meshes/gripper/gripper_body.STL"/>
       </geometry>
@@ -16,7 +16,7 @@
       </material>
     </visual>
     <collision>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
         <mesh filename="package://robot_model/meshes/gripper/gripper_body.STL"/>
       </geometry>
