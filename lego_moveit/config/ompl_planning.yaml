@@ -53,16 +53,16 @@ planner_configs:
   PRMstarkConfigDefault:
     type: geometric::PRMstar
 manipulator:
-  default_planner_config: RRTConnectkConfigDefault
+  default_planner_config: RRTkConfigDefault
   planner_configs:
     - SBLkConfigDefault
     - ESTkConfigDefault
     - LBKPIECEkConfigDefault
     - BKPIECEkConfigDefault
     - KPIECEkConfigDefault
-    - RRTkConfigDefault
-    - RRTConnectkConfigDefault
-    - RRTstarkConfigDefault
+    - RRTkConfigDefault             #It is either this one
+    - RRTConnectkConfigDefault      #this one
+    - RRTstarkConfigDefault         #or this one
     - TRRTkConfigDefault
     - PRMkConfigDefault
     - PRMstarkConfigDefault
