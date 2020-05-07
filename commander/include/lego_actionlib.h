@@ -17,7 +17,7 @@
 struct lego_actionlib{
 private:
   //initialize state machine
-  int search_state_machine;
+  int search_state_machine=0;
 protected:
 
 public:
@@ -28,7 +28,6 @@ public:
     moveit::planning_interface::MoveGroupInterface::Plan search;
     //initialize the vector containing joint positions
     std::vector<double> joint_group_positions =decltype(joint_group_positions)(6);
-
     bool planning_success;
     do {
       switch (search_state_machine) {
