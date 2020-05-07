@@ -77,7 +77,7 @@ public:
 
     bool planning_success;
     do {
-      move_group.setJointValueTarget(marker_pose,"TCP");
+      move_group.setPoseTarget(marker_pose,"TCP");
       planning_success = (move_group.plan(plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
 
       if (planning_success==false) {
@@ -103,7 +103,7 @@ public:
 
     bool planning_success;
     do {
-      move_group.setJointValueTarget(marker_pose,"TCP");
+      move_group.setPoseTarget(marker_pose,"TCP");
       planning_success = (move_group.plan(plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
 
       if (planning_success==false) {
@@ -127,27 +127,39 @@ public:
   geometry_msgs::Pose stickLocation(double x,double y,double z,geometry_msgs::TransformStamped transfrom_in){
     //Get RPY from teh transform
     tf2::Quaternion q(transfrom_in.transform.rotation.x,transfrom_in.transform.rotation.y,transfrom_in.transform.rotation.z,transfrom_in.transform.rotation.w);
-    double R, P, Y;
+    double R, P, Y, tx, ty, tz;
     tf2::Matrix3x3 matrix(q);
     matrix.getRPY(R, P, Y);
-    // rotation angle about X-axis (pitch)
-    double sin_P = sin(P);
-    double cos_P = cos(P);
-    // rotation angle about Y-axis (yaw)
-    double sin_Y = sin(Y);
-    double cos_Y = cos(Y);
-    // rotation angle about Z-axis (roll)
+    // rotation angle about X-axis (roll)
     double sin_R = sin(R);
     double cos_R = cos(R);
+    // rotation angle about Y-axis (pitch)
+    double sin_P = sin(P);
+    double cos_P = cos(P);
+    // rotation angle about Z-axis (yaw)
+    double sin_Y = sin(Y);
+    double cos_Y = cos(Y);
     //calculate the new translation
-    x=cos_R*cos_Y*x-sin_R*cos_P*y+cos_R*sin_Y*sin_P*y+sin_R*sin_P*z+cos_R*sin_Y*cos_P*z;
-    y=sin_R*cos_Y*x+cos_R*cos_P*y+cos_R*sin_Y*sin_P*y-cos_R*sin_P*z+sin_R+sin_Y+cos_P*z;
-    z=-sin_Y*x+cos_Y*sin_P*y+cos_Y*cos_P*z;
+    double a11 = cos_Y*cos_P;
+    double a12 = cos_Y*sin_P*sin_R-sin_Y*cos_R;
+    double a13 = sin_Y*sin_P*cos_R+sin_Y*sin_R;
+
+    double a21 = sin_Y*cos_P;
+    double a22 = sin_Y*sin_P*sin_R-cos_Y*cos_R;
+    double a23 = sin_Y*sin_P*cos_R+cos_Y*sin_R;
+
+    double a31 = -sin_P;
+    double a32 = cos_P*sin_R;
+    double a33 = cos_P*cos_R;
+
+    tx=a11*x+a12*y+a13*z;
+    ty=a21*x+a22*y+a23*z;
+    tz=a31*x+a32*y+a33*z;
     //initialize return pose
     geometry_msgs::Pose Pose;
-    Pose.position.x = x;
-    Pose.position.y = y;
-    Pose.position.z = z;
+    Pose.position.x = tx+transfrom_in.transform.translation.x;
+    Pose.position.y = ty+transfrom_in.transform.translation.y;
+    Pose.position.z = tz+transfrom_in.transform.translation.z;
     Pose.orientation=transfrom_in.transform.rotation;
     return Pose;
   }

@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
   ros::Subscriber sub_latest = tf_data.nh.subscribe("data/markers/latest_transform", 1, &tf_tracker::latest_transform,&tf_data);
   ros::Subscriber sub_avg = tf_data.nh.subscribe("data/markers/running_avg", 1, &tf_tracker::running_avg,&tf_data);
 
-  ros::AsyncSpinner spinner(0);
+  ros::AsyncSpinner spinner(1);
   spinner.start();
   ROS_INFO("Setting up movit");
   //setting up movit
@@ -56,34 +56,36 @@ int main(int argc, char **argv) {
   } while( tf_data.avg_marker_found[0]==false && ros::ok());
 
   ROS_INFO("Done Calibrating");
+  
+  while (ros::ok()) {
+    Plan=actions.go_to_stick(move_group.getName(),0,tf_data.avg[0]);
+    move_group.execute(Plan);
 
-  Plan=actions.go_to_stick(move_group.getName(),0,tf_data.avg[0]);
-  move_group.execute(Plan);
+    ROS_INFO("Robot is @Calibration stick number 0");
+    ROS_INFO("Waiting 5 sec before moving on");
+    ros::Duration(5).sleep();
 
-  ROS_INFO("Robot is @Calibration stick number 0");
-  ROS_INFO("Waiting 20 sec before moving on");
-  ros::Duration(20).sleep();
+    Plan=actions.go_to_stick(move_group.getName(),1,tf_data.avg[0]);
+    move_group.execute(Plan);
 
-  Plan=actions.go_to_stick(move_group.getName(),1,tf_data.avg[0]);
-  move_group.execute(Plan);
+    ROS_INFO("Robot is @Calibration stick number 1");
+    ROS_INFO("Waiting 5 sec before moving on");
+    ros::Duration(5).sleep();
 
-  ROS_INFO("Robot is @Calibration stick number 1");
-  ROS_INFO("Waiting 20 sec before moving on");
-  ros::Duration(20).sleep();
+    Plan=actions.go_to_stick(move_group.getName(),2,tf_data.avg[0]);
+    move_group.execute(Plan);
 
-  Plan=actions.go_to_stick(move_group.getName(),2,tf_data.avg[0]);
-  move_group.execute(Plan);
+    ROS_INFO("Robot is @Calibration stick number 2");
+    ROS_INFO("Waiting 5 sec before moving on");
+    ros::Duration(5).sleep();
 
-  ROS_INFO("Robot is @Calibration stick number 2");
-  ROS_INFO("Waiting 20 sec before moving on");
-  ros::Duration(20).sleep();
+    Plan=actions.go_to_stick(move_group.getName(),3,tf_data.avg[0]);
+    move_group.execute(Plan);
 
-  Plan=actions.go_to_stick(move_group.getName(),3,tf_data.avg[0]);
-  move_group.execute(Plan);
-
-  ROS_INFO("Robot is @Calibration stick number 3");
-  ROS_INFO("Waiting 20 sec before moving on");
-  ros::Duration(20).sleep();
+    ROS_INFO("Robot is @Calibration stick number 3");
+    ROS_INFO("Waiting 5 sec before moving on");
+    ros::Duration(5).sleep();
+  }
 
   ros::spin();
 }
