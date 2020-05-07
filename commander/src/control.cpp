@@ -131,7 +131,7 @@ int main(int argc, char **argv) {
     joint_group_positions[0] = 0.01;
     joint_group_positions[1] = -M_PI/2;
     joint_group_positions[2] = -M_PI/2;
-    joint_group_positions[3] = -M_PI/4-M_PI/8;
+    joint_group_positions[3] = -M_PI/8;
     joint_group_positions[4] = M_PI/2;
     joint_group_positions[5] = 0;
     move_group.setJointValueTarget(joint_group_positions);
