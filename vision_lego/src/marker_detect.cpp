@@ -140,6 +140,11 @@ public:
         vision_data.orientation.Roll=R;
         vision_data.orientation.Pitch=P;
         vision_data.orientation.Yaw=Y;
+
+        if (vision_data.orientation.Yaw<0){
+
+          Y=abs(vision_data.orientation.Yaw);
+        }
         broadcast_frame(frame,vision_data);
 
       }
