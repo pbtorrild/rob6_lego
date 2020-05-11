@@ -74,6 +74,7 @@ public:
     moveit::planning_interface::MoveGroupInterface::Plan plan;
     //get marker pose
     geometry_msgs::Pose marker_pose=transformToPose(marker);
+    marker_pose.position.z+=0.25;
 
     bool planning_success;
     do {
