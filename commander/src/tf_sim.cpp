@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
   ROS_INFO("Simulation begins in: 5 sec");
   ros::Duration(5).sleep();
   ROS_INFO("Simulation begins NOW");
-  
+
   ros::Rate r(10);
   //the mesage that shall be sent
   geometry_msgs::TransformStamped latest;

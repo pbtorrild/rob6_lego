@@ -65,7 +65,7 @@ int main(int argc, char **argv) {
     tf_data.locate_tcp(actions.latest_pose);
 
     ROS_INFO("Waiting 5 sec before moving on");
-    ros::Duration(5).sleep();
+    ros::Duration(0.5).sleep();
 
     Plan=actions.go_to_stick(move_group.getName(),1,tf_data.avg[0]);
     move_group.execute(Plan);
@@ -74,7 +74,7 @@ int main(int argc, char **argv) {
     tf_data.locate_tcp(actions.latest_pose);
 
     ROS_INFO("Waiting 5 sec before moving on");
-    ros::Duration(5).sleep();
+    ros::Duration(0.5).sleep();
 
     Plan=actions.go_to_stick(move_group.getName(),2,tf_data.avg[0]);
     move_group.execute(Plan);
@@ -83,7 +83,7 @@ int main(int argc, char **argv) {
     tf_data.locate_tcp(actions.latest_pose);
 
     ROS_INFO("Waiting 5 sec before moving on");
-    ros::Duration(5).sleep();
+    ros::Duration(0.5).sleep();
 
     Plan=actions.go_to_stick(move_group.getName(),3,tf_data.avg[0]);
     move_group.execute(Plan);
@@ -92,7 +92,7 @@ int main(int argc, char **argv) {
     tf_data.locate_tcp(actions.latest_pose);
 
     ROS_INFO("Waiting 5 sec before moving on");
-    ros::Duration(5).sleep();
+    ros::Duration(0.5).sleep();
   }
 
   ros::spin();

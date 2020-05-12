@@ -31,7 +31,7 @@ void load_param()
   ros::param::param<std::string>("/file_path", file_path, "/home/peter/");
   ros::param::param<std::string>("/file_name", file_name, "csv_output.csv");
   ros::param::param<std::string>("/separator", separator, ";");
-  ros::param::param<int32_t>("/sample_size", sample_size, 10);
+  ros::param::param<int32_t>("/sample_size", sample_size, 100);
   ROS_INFO("Read parameters!");
   ROS_INFO("File Path: %s",file_path.c_str());
   ROS_INFO("File Name: %s",file_name.c_str());
