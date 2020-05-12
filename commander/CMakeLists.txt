@@ -139,19 +139,23 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(         control          src/control.cpp)
-add_executable(         pose_finder          src/pose_finder.cpp)
-add_executable(         tf_sim          src/tf_sim.cpp)
+add_executable(         control                       src/control.cpp)
+add_executable(         pose_finder                   src/pose_finder.cpp)
+add_executable(         tf_sim                        src/tf_sim.cpp)
+add_executable(         pose_data_extractor           src/data_extractor.cpp)
 
 
 add_dependencies(       control          ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(       pose_finder          ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(       tf_sim          ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(       pose_data_extractor          ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
 
 
 target_link_libraries(  control          ${catkin_LIBRARIES})
 target_link_libraries(  pose_finder          ${catkin_LIBRARIES})
 target_link_libraries(  tf_sim          ${catkin_LIBRARIES})
+target_link_libraries(  pose_data_extractor          ${catkin_LIBRARIES})
 
 
 #############

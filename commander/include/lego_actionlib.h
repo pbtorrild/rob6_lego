@@ -14,6 +14,7 @@
 #include <geometry_msgs/TransformStamped.h>
 #include <geometry_msgs/Pose.h>
 
+
 struct lego_actionlib{
 private:
   //initialize state machine
@@ -21,7 +22,8 @@ private:
 protected:
 
 public:
-
+  geometry_msgs::Pose latest_pose;
+  
   moveit::planning_interface::MoveGroupInterface::Plan marker_search(std::string name){
     moveit::planning_interface::MoveGroupInterface move_group(name);
     //initialize the movement plan
@@ -96,10 +98,14 @@ public:
     //get marker pose
     geometry_msgs::Pose marker_pose;
     switch (stick_num) {
-      case 0: marker_pose=stickLocation(0.10,0.10,0.10045,marker); break;
-      case 1: marker_pose=stickLocation(-0.10,0.10,0.10045,marker); break;
-      case 2: marker_pose=stickLocation(0.10,-0.10,0.10045,marker); break;
-      case 3: marker_pose=stickLocation(-0.10,-0.10,0.10045,marker); break;
+      case 0: marker_pose=stickLocation(0.10,0.10,0.10045,marker);
+              latest_pose=marker_pose; break;
+      case 1: marker_pose=stickLocation(-0.10,0.10,0.10045,marker);
+              latest_pose=marker_pose; break;
+      case 2: marker_pose=stickLocation(0.10,-0.10,0.10045,marker);
+              latest_pose=marker_pose; break;
+      case 3: marker_pose=stickLocation(-0.10,-0.10,0.10045,marker);
+              latest_pose=marker_pose; break;
     }
 
     bool planning_success;
