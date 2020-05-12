@@ -20,6 +20,7 @@
 #include <geometry_msgs/TransformStamped.h>
 #include <geometry_msgs/Pose.h>
 #include <vision_lego/TransformRPYStamped.h>
+#include <commander/PoseTCP.h>
 
 struct tf_tracker{
 private:
@@ -50,6 +51,7 @@ public:
 
   }
   ros::NodeHandle nh;
+  ros::Publisher pub = nh.advertise<commander::PoseTCP>("data/tcp_location", 100);
 
   void load_param() {
     ros::param::param<int>("/num_markers", num_markers, 14);
@@ -68,6 +70,12 @@ public:
     avg_marker_found = decltype(avg_marker_found)(num_markers);
   }
 
+  void send_data(geometry_msgs::Pose tcp,geometry_msgs::Pose goal) {
+    commander::PoseTCP msg;
+    msg.tcp_location=tcp;
+    msg.goal_location=goal;
+    pub.publish(msg);
+  }
 
   void running_avg(geometry_msgs::TransformStamped msg){
 
@@ -90,6 +98,29 @@ public:
    latest[id_num]=msg;
    marker_found[id_num] = true;
 
+  }
+
+  void locate_tcp(geometry_msgs::Pose goal) {
+    //just get the latest value
+    geometry_msgs::TransformStamped tcp_location_transform;
+    try{
+    tcp_location_transform = buffer_.lookupTransform("word", "TCP", ros::Time(0));
+    } catch (tf2::TransformException &ex) {
+    ROS_WARN("Could NOT transform world to TCP: %s", ex.what());
+    }
+
+    //Get as pose
+    geometry_msgs::Pose tcp_location = transformToPose(tcp_location_transform);
+
+  }
+
+  geometry_msgs::Pose transformToPose(geometry_msgs::TransformStamped transfrom_in) {
+    geometry_msgs::Pose Pose;
+    Pose.position.x = transfrom_in.transform.translation.x;
+    Pose.position.y = transfrom_in.transform.translation.y;
+    Pose.position.z = transfrom_in.transform.translation.z;
+    Pose.orientation=transfrom_in.transform.rotation;
+    return Pose;
   }
 
 

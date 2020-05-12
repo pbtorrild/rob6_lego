@@ -50,7 +50,7 @@ public:
 
   bool num_markers_found;
   tf_tracker():
-  tf2_(buffer_),  target_frame_("base_link")
+  tf2_(buffer_),  target_frame_("world")
   {
 
   }
@@ -115,7 +115,7 @@ public:
     //wait to make sure pose is in the buffer
     ros::Duration(0.20).sleep();
     try{
-       frame = buffer_.lookupTransform( "base_link",msg.child_frame_id,msg.header.stamp);
+       frame = buffer_.lookupTransform( "world",msg.child_frame_id,msg.header.stamp);
        transform_succes=true;
     }
 
