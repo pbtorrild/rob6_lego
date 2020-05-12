@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
   moveit::planning_interface::MoveGroupInterface move_group("manipulator");
   moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
   moveit::planning_interface::PlanningSceneInterface setEndEffectorLink("TCP"); //NOtE: THIS CAN BE ANY FRAME ON THE ENDEFFECTOR
-  move_group.setPoseReferenceFrame("world");
+  move_group.setPoseReferenceFrame("table");
   move_group.startStateMonitor();
 
   //get acces to action lib
@@ -56,12 +56,14 @@ int main(int argc, char **argv) {
   } while( tf_data.avg_marker_found[0]==false && ros::ok());
 
   ROS_INFO("Done Calibrating");
-  
+
   while (ros::ok()) {
     Plan=actions.go_to_stick(move_group.getName(),0,tf_data.avg[0]);
     move_group.execute(Plan);
 
     ROS_INFO("Robot is @Calibration stick number 0");
+    tf_data.locate_tcp(actions.latest_pose);
+
     ROS_INFO("Waiting 5 sec before moving on");
     ros::Duration(5).sleep();
 
@@ -69,6 +71,8 @@ int main(int argc, char **argv) {
     move_group.execute(Plan);
 
     ROS_INFO("Robot is @Calibration stick number 1");
+    tf_data.locate_tcp(actions.latest_pose);
+
     ROS_INFO("Waiting 5 sec before moving on");
     ros::Duration(5).sleep();
 
@@ -76,6 +80,8 @@ int main(int argc, char **argv) {
     move_group.execute(Plan);
 
     ROS_INFO("Robot is @Calibration stick number 2");
+    tf_data.locate_tcp(actions.latest_pose);
+
     ROS_INFO("Waiting 5 sec before moving on");
     ros::Duration(5).sleep();
 
@@ -83,6 +89,8 @@ int main(int argc, char **argv) {
     move_group.execute(Plan);
 
     ROS_INFO("Robot is @Calibration stick number 3");
+    tf_data.locate_tcp(actions.latest_pose);
+
     ROS_INFO("Waiting 5 sec before moving on");
     ros::Duration(5).sleep();
   }

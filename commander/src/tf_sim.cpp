@@ -37,7 +37,7 @@ int main(int argc, char **argv) {
   q.setRPY(0,0,0);
 
   //The latest msg
-  latest.header.frame_id="world";
+  latest.header.frame_id="table";
   latest.child_frame_id="marker_0";
   latest.transform.translation.x=0.4;
   latest.transform.translation.y=0.4;

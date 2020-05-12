@@ -46,7 +46,7 @@ public:
 
   //tf tracker
   tf_tracker():
-  tf2_(buffer_),  target_frame_("world")
+  tf2_(buffer_),  target_frame_("table")
   {
 
   }
@@ -104,14 +104,15 @@ public:
     //just get the latest value
     geometry_msgs::TransformStamped tcp_location_transform;
     try{
-    tcp_location_transform = buffer_.lookupTransform("word", "TCP", ros::Time(0));
+    tcp_location_transform = buffer_.lookupTransform("table", "TCP", ros::Time(0));
     } catch (tf2::TransformException &ex) {
-    ROS_WARN("Could NOT transform world to TCP: %s", ex.what());
+    ROS_WARN("Could NOT transform table to TCP: %s", ex.what());
     }
 
     //Get as pose
     geometry_msgs::Pose tcp_location = transformToPose(tcp_location_transform);
 
+    send_data(tcp_location,goal);
   }
 
   geometry_msgs::Pose transformToPose(geometry_msgs::TransformStamped transfrom_in) {

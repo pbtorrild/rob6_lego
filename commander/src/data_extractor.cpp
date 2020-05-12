@@ -28,7 +28,7 @@ ros::NodeHandle nh;
 
 void load_param()
 {
-  ros::param::param<std::string>("/file_path", file_path, "/home/");
+  ros::param::param<std::string>("/file_path", file_path, "/home/peter/");
   ros::param::param<std::string>("/file_name", file_name, "csv_output.csv");
   ros::param::param<std::string>("/separator", separator, ";");
   ros::param::param<int32_t>("/sample_size", sample_size, 10);

@@ -50,7 +50,7 @@ public:
 
   bool num_markers_found;
   tf_tracker():
-  tf2_(buffer_),  target_frame_("world")
+  tf2_(buffer_),  target_frame_("table")
   {
 
   }
@@ -87,7 +87,7 @@ public:
     geometry_msgs::TransformStamped transformStamped;
 
     transformStamped.header.stamp = ros::Time::now();
-    transformStamped.header.frame_id = "world";
+    transformStamped.header.frame_id = "table";
     transformStamped.child_frame_id = frame_id;
     transformStamped.transform=transform;
     pub_avg.publish(transformStamped);
@@ -100,7 +100,7 @@ public:
     geometry_msgs::TransformStamped transformStamped;
 
     transformStamped.header.stamp = ros::Time::now();
-    transformStamped.header.frame_id = "world";
+    transformStamped.header.frame_id = "table";
     transformStamped.child_frame_id = frame_id;
     transformStamped.transform=transform;
     br.sendTransform(transformStamped);
@@ -108,14 +108,14 @@ public:
 
 
   void tracker(vision_lego::TransformRPYStamped msg){
-    //Find frame in regard to world
+    //Find frame in regard to table
 
     geometry_msgs::TransformStamped frame;
     bool transform_succes;
     //wait to make sure pose is in the buffer
     ros::Duration(0.20).sleep();
     try{
-       frame = buffer_.lookupTransform( "world",msg.child_frame_id,msg.header.stamp);
+       frame = buffer_.lookupTransform( "table",msg.child_frame_id,msg.header.stamp);
        transform_succes=true;
     }
 
