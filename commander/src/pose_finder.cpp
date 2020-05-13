@@ -44,6 +44,10 @@ private:
   //Vector containg the avg_pos of the markers
   std::vector<geometry_msgs::Transform> avg_pos;
   std::vector<bool> marker_found;
+
+  //A simple saver that contains the latest avg_gate number of measurements
+  std::vector<geometry_msgs::Transform> values;
+  std::vector<std::vector<geometry_msgs::Transform>> running_values;
 protected:
 
 public:
@@ -76,6 +80,10 @@ public:
     //Vector containg the avg_pos of the markers
     avg_pos = decltype(avg_pos)(num_markers);
     marker_found =decltype(marker_found)(num_markers);
+
+    //running_values
+    values = decltype(values)(avg_gate);
+    running_values = decltype(running_values)(num_markers,values);
   }
 
   void publish_latest(geometry_msgs::TransformStamped transform_in) {
@@ -147,6 +155,10 @@ public:
      avg[id_num][1].z += rz;
      counter[id_num] += 1;
 
+     //Save value in the running_values
+     running_values[id_num][counter[id_num]].translation = frame.transform.translation;
+     running_values[id_num][counter[id_num]].rotation = frame.transform.rotation;
+
      if (counter[id_num]==avg_gate) {
 
        //set avg trans
@@ -180,6 +192,7 @@ public:
        reset_all(id_num);
 
      }
+
    }
 }
   void reset_all(int id_num) {
