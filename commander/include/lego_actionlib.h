@@ -74,9 +74,8 @@ public:
   moveit::planning_interface::MoveGroupInterface::Plan go_to_marker(std::string name,geometry_msgs::TransformStamped marker){
     moveit::planning_interface::MoveGroupInterface move_group(name);
     moveit::planning_interface::MoveGroupInterface::Plan plan;
-    //get marker pose
-    geometry_msgs::Pose marker_pose=transformToPose(marker);
-    marker_pose.position.z+=0.25;
+    //get marker pose the releavtive pose is the translation to the camera frame
+    geometry_msgs::Pose marker_pose=get_relative_pose(0.05049,-0.0175,0.15,marker);
 
     bool planning_success;
     do {
@@ -98,13 +97,13 @@ public:
     //get marker pose
     geometry_msgs::Pose marker_pose;
     switch (stick_num) {
-      case 0: marker_pose=stickLocation(0.10,0.10,0.10,marker);
+      case 0: marker_pose=get_relative_pose(0.10,0.10,0.10,marker);
               latest_pose=marker_pose; break;
-      case 1: marker_pose=stickLocation(-0.10,0.10,0.10,marker);
+      case 1: marker_pose=get_relative_pose(-0.10,0.10,0.10,marker);
               latest_pose=marker_pose; break;
-      case 2: marker_pose=stickLocation(0.10,-0.10,0.10,marker);
+      case 2: marker_pose=get_relative_pose(0.10,-0.10,0.10,marker);
               latest_pose=marker_pose; break;
-      case 3: marker_pose=stickLocation(-0.10,-0.10,0.10,marker);
+      case 3: marker_pose=get_relative_pose(-0.10,-0.10,0.10,marker);
               latest_pose=marker_pose; break;
     }
 
@@ -131,7 +130,7 @@ public:
     Pose.orientation=transfrom_in.transform.rotation;
     return Pose;
   }
-  geometry_msgs::Pose stickLocation(double x,double y,double z,geometry_msgs::TransformStamped transfrom_in){
+  geometry_msgs::Pose get_relative_pose(double x,double y,double z,geometry_msgs::TransformStamped transfrom_in){
     //Get RPY from teh transform
     tf2::Quaternion q(transfrom_in.transform.rotation.x,transfrom_in.transform.rotation.y,transfrom_in.transform.rotation.z,transfrom_in.transform.rotation.w);
     double R, P, Y, tx, ty, tz;
