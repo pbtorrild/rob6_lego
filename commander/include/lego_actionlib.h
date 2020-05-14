@@ -23,7 +23,7 @@ protected:
 
 public:
   geometry_msgs::Pose latest_pose;
-  
+
   moveit::planning_interface::MoveGroupInterface::Plan marker_search(std::string name){
     moveit::planning_interface::MoveGroupInterface move_group(name);
     //initialize the movement plan
@@ -36,7 +36,7 @@ public:
         case 0: joint_group_positions[0] = M_PI-0.01;
                 joint_group_positions[1] = -M_PI/2;
                 joint_group_positions[2] = -M_PI/2;
-                joint_group_positions[3] = -M_PI/8;
+                joint_group_positions[3] = -M_PI/2;
                 joint_group_positions[4] = M_PI/2;
                 joint_group_positions[5] = 0;
                 move_group.setJointValueTarget(joint_group_positions);
@@ -53,7 +53,7 @@ public:
         case 1: joint_group_positions[0] = -M_PI+0.01;
                 joint_group_positions[1] = -M_PI/2;
                 joint_group_positions[2] = -M_PI/2;
-                joint_group_positions[3] = -M_PI/8;
+                joint_group_positions[3] = -M_PI/2;
                 joint_group_positions[4] = M_PI/2;
                 joint_group_positions[5] = 0;
                 move_group.setJointValueTarget(joint_group_positions);
@@ -98,13 +98,13 @@ public:
     //get marker pose
     geometry_msgs::Pose marker_pose;
     switch (stick_num) {
-      case 0: marker_pose=stickLocation(0.10,0.10,0.10045,marker);
+      case 0: marker_pose=stickLocation(0.10,0.10,0.10,marker);
               latest_pose=marker_pose; break;
-      case 1: marker_pose=stickLocation(-0.10,0.10,0.10045,marker);
+      case 1: marker_pose=stickLocation(-0.10,0.10,0.10,marker);
               latest_pose=marker_pose; break;
-      case 2: marker_pose=stickLocation(0.10,-0.10,0.10045,marker);
+      case 2: marker_pose=stickLocation(0.10,-0.10,0.10,marker);
               latest_pose=marker_pose; break;
-      case 3: marker_pose=stickLocation(-0.10,-0.10,0.10045,marker);
+      case 3: marker_pose=stickLocation(-0.10,-0.10,0.10,marker);
               latest_pose=marker_pose; break;
     }
 

@@ -17,14 +17,10 @@ int main(int argc, char **argv) {
   ros::Publisher pub_latest = nh.advertise<geometry_msgs::TransformStamped>("data/markers/latest_transform", 5);
   ros::Publisher pub_avg = nh.advertise<geometry_msgs::TransformStamped>("data/markers/running_avg", 5);
 
-  ROS_INFO("Simulation begins in: 20 sec");
-  ros::Duration(5).sleep();
-  ROS_INFO("Simulation begins in: 15 sec");
-  ros::Duration(5).sleep();
-  ROS_INFO("Simulation begins in: 10 sec");
-  ros::Duration(5).sleep();
-  ROS_INFO("Simulation begins in: 5 sec");
-  ros::Duration(5).sleep();
+  for (int i = 0; i < 10; i++) {
+    ROS_INFO("Simulation begins in: %d sec",10-i);
+    ros::Duration(1).sleep();
+  }
   ROS_INFO("Simulation begins NOW");
 
   ros::Rate r(10);
@@ -39,9 +35,9 @@ int main(int argc, char **argv) {
   //The latest msg
   latest.header.frame_id="table";
   latest.child_frame_id="marker_0";
-  latest.transform.translation.x=0.4;
-  latest.transform.translation.y=0.4;
-  latest.transform.translation.z=0.06;
+  latest.transform.translation.x=0.4055;
+  latest.transform.translation.y=-0.4;
+  latest.transform.translation.z=0.00;
   latest.transform.rotation.x=q.x();
   latest.transform.rotation.y=q.y();
   latest.transform.rotation.z=q.z();
