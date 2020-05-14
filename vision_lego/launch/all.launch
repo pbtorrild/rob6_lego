@@ -13,9 +13,9 @@
 
 
   <!-- the self made files -->
-  <param name="cam_matrix_mode" type="int" value="2" />
+  <param name="cam_matrix_mode" type="int" value="4" />
   <param name="corner_refinement_method" type="int" value= "2" />
-  <param name="marker_width" type="double" value="0.04040" />
+  <param name="marker_width" type="double" value="0.0388" />
   <node pkg="vision_lego" type="marker_detect" name="marker_detect" output="screen"></node>
 
   <!-- Data extractor

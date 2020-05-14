@@ -1,0 +1,10 @@
+<launch>
+
+  <!-- the self made files -->
+  <param name="sample_size" type="int" value="100" />
+  <param name="file_path" type="str" value="/home/peter/Desktop/" />
+  <param name="file_name" type="str" value="Planner_test_1_res_00005.cvs" />
+  <param name="separator" type="str" value=";" />
+  <node pkg="commander" type="pose_data_extractor" name="pose_data_extractor" output="screen"></node>
+
+</launch>
