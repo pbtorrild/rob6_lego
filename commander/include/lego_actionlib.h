@@ -170,6 +170,37 @@ public:
     return Pose;
   }
 
+  moveit::planning_interface::MoveGroupInterface::Plan go_above_marker(std::string name,int height ,geometry_msgs::TransformStamped marker){
+    moveit::planning_interface::MoveGroupInterface move_group(name);
+    moveit::planning_interface::MoveGroupInterface::Plan plan;
+    //get marker pose
+    geometry_msgs::Pose marker_pose;
+    switch (height) {
+      case 0: marker_pose=get_relative_pose(0.05049,-0.0175,0.10+height*0.02,marker);
+              latest_pose=marker_pose; break;
+      case 1: marker_pose=get_relative_pose(0.05049,-0.0175,0.10+height*0.02,marker);
+              latest_pose=marker_pose; break;
+      case 2: marker_pose=get_relative_pose(0.05049,-0.0175,0.10+height*0.02,marker);
+              latest_pose=marker_pose; break;
+      case 3: marker_pose=get_relative_pose(0.05049,-0.0175,0.10+height*0.02,marker);
+              latest_pose=marker_pose; break;
+    }
+
+    bool planning_success;
+    do {
+      move_group.setPoseTarget(marker_pose,"TCP");
+      planning_success = (move_group.plan(plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+
+      if (planning_success==false) {
+        ROS_ERROR("Planning failed miserably :(");
+        break;
+      } else{
+        return plan;
+      }
+    } while(planning_success!=true && ros::ok());
+
+  }
+
 };
 
 

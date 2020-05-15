@@ -43,7 +43,7 @@ public:
   //Vector containg weather or not the markers are found
   std::vector<bool> marker_found;
   std::vector<bool> avg_marker_found;
-
+  int test_mode;
   //tf tracker
   tf_tracker():
   tf2_(buffer_),  target_frame_("table")
@@ -54,6 +54,7 @@ public:
   ros::Publisher pub = nh.advertise<commander::PoseTCP>("data/tcp_location", 100);
 
   void load_param() {
+    ros::param::param<int>("/test_mode", test_mode, 0);
     ros::param::param<int>("/num_markers", num_markers, 14);
     ros::param::param<int>("/avg_gate", avg_gate, 300);
     declare_values();
