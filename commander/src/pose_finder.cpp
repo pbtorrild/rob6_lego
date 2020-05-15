@@ -48,6 +48,7 @@ private:
   //A simple saver that contains the latest avg_gate number of measurements
   std::vector<geometry_msgs::Transform> values;
   std::vector<std::vector<geometry_msgs::Transform>> running_values;
+  std::vector<int> seq;
 protected:
 
 public:
@@ -84,6 +85,7 @@ public:
     //running_values
     values = decltype(values)(avg_gate);
     running_values = decltype(running_values)(num_markers,values);
+    seq = decltype(seq)(num_markers);
   }
 
   void publish_latest(geometry_msgs::TransformStamped transform_in) {
@@ -132,12 +134,16 @@ public:
          transform_succes=false;
    }
    if (transform_succes==true) {
-     //Send to latest Publisher
-     publish_latest(frame);
      //Get frame id as int
      std::string frame_id =msg.child_frame_id;
      frame_id.erase(0,7);
      int id_num = std::stoi(frame_id);
+
+     //Send to latest Publisher
+     frame.header.seq=seq[id_num];
+     publish_latest(frame);
+     seq[id_num]++;
+
      //set avg translation
      avg[id_num][0].x += frame.transform.translation.x;
      avg[id_num][0].y += frame.transform.translation.y;
@@ -188,9 +194,13 @@ public:
          num_markers_found +=1;
        }
        marker_found[id_num]=true;
+
+       //Find the 6 dimentional euclidian distance
+       //to each of the values in the running_values inorder to find
+       //the value closest to the avg
+
        //Reset
        reset_all(id_num);
-
      }
 
    }
