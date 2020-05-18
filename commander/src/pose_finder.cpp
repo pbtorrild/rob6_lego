@@ -1,4 +1,5 @@
 #include <math.h>
+#include <bits/stdc++.h>
 #include <ros/ros.h>
 #include <iostream>
 
@@ -24,6 +25,7 @@
 
 
 #include <message_filters/subscriber.h>
+
 
 class tf_tracker{
 private:
@@ -62,6 +64,7 @@ public:
   ros::NodeHandle nh;
   ros::Publisher pub_latest = nh.advertise<geometry_msgs::TransformStamped>("data/markers/latest_transform", 5);
   ros::Publisher pub_avg = nh.advertise<geometry_msgs::TransformStamped>("data/markers/running_avg", 5);
+  ros::Publisher pub_smallest_mad = nh.advertise<geometry_msgs::Transform>("data/markers/smallest_mad", 5);
 
   void load_param() {
     ros::param::param<int>("/num_markers", num_markers, 14);
@@ -101,6 +104,10 @@ public:
     transformStamped.child_frame_id = frame_id;
     transformStamped.transform=transform;
     pub_avg.publish(transformStamped);
+  }
+
+  void publish_smallest_mad(geometry_msgs::Transform transform_in) {
+    pub_smallest_mad.publish(transform_in);
   }
 
   void broadcast_frame(geometry_msgs::Transform transform, int id_num) {
@@ -197,7 +204,32 @@ public:
 
        //Find the 6 dimentional euclidian distance
        //to each of the values in the running_values inorder to find
-       //the value closest to the avg
+       //the value closest to the avg i.e the Mean diviation
+       double smallest_distance;
+       geometry_msgs::Transform smallest_mad;
+       for (int i = 0; i < avg_gate && ros::ok(); i++) {
+
+         double dx=std::pow((tx_avg-running_values[id_num][i].translation.x),2);
+         double dy=std::pow((ty_avg-running_values[id_num][i].translation.y),2);
+         double dz=std::pow((tz_avg-running_values[id_num][i].translation.z),2);
+
+         double R, P, Y;
+         tf2::Quaternion q_(running_values[id_num][i].rotation.x,running_values[id_num][i].rotation.y,running_values[id_num][i].rotation.z,running_values[id_num][i].rotation.w);
+         tf2::Matrix3x3 matrix_(q_);
+         matrix_.getRPY(R,P,Y);
+
+         double dR=std::pow((rx_avg-R),2);
+         double dP=std::pow((ry_avg-P),2);
+         double dY=std::pow((rz_avg-Y),2);
+
+         double distance = std::pow(dx+dy+dz+dR+dP+dY,1/6);
+         if (distance<=smallest_distance) {
+           smallest_distance=distance;
+           smallest_mad=running_values[id_num][i];
+         }
+
+       }
+       publish_smallest_mad(smallest_mad);
 
        //Reset
        reset_all(id_num);
