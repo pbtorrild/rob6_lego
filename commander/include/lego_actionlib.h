@@ -75,7 +75,7 @@ public:
     moveit::planning_interface::MoveGroupInterface move_group(name);
     moveit::planning_interface::MoveGroupInterface::Plan plan;
     //get marker pose the releavtive pose is the translation to the camera frame
-    geometry_msgs::Pose marker_pose=get_relative_pose(0.05049,-0.0175,0.15,marker);
+    geometry_msgs::Pose marker_pose=get_relative_pose(0.05049,0.0175,0.15,marker);
 
     bool planning_success;
     do {

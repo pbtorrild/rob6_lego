@@ -18,6 +18,7 @@ private:
   std::string separator;
   int32_t sample_size;
   int32_t counter;
+  int procent;
   ros::Time timer;
 protected:
   std::ofstream file;
@@ -52,6 +53,11 @@ void write_csv(float x,float y,float z,double R,double P,double Y, double time) 
     //add data to line
     file << x << separator << y << separator << z << separator << R << separator << P << separator << Y << separator << time << std::endl;
     //add to counter
+
+    if (counter%(sample_size/20)==0) {
+      ROS_INFO("%d %% done with the file",procent*5);
+      procent++;
+    }
     counter++;
     //if we have the number of smaples specified close the file and say done
     if(counter==sample_size){

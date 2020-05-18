@@ -130,9 +130,9 @@ public:
     geometry_msgs::TransformStamped frame;
     bool transform_succes;
     //wait to make sure pose is in the buffer
-    ros::Duration(0.20).sleep();
+    //ros::Duration(0.20).sleep();
     try{
-       frame = buffer_.lookupTransform( "table",msg.child_frame_id,msg.header.stamp);
+       frame = buffer_.lookupTransform( "table",msg.child_frame_id,ros::Time(0));
        transform_succes=true;
     }
 
@@ -223,7 +223,7 @@ public:
          double dY=std::pow((rz_avg-Y),2);
 
          double distance = std::pow(dx+dy+dz+dR+dP+dY,1/6);
-         if (distance<=smallest_distance) {
+         if (distance<=smallest_distance || i==0) {
            smallest_distance=distance;
            smallest_mad=running_values[id_num][i];
          }

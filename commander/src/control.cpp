@@ -28,6 +28,7 @@ int main(int argc, char **argv) {
   moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
   moveit::planning_interface::PlanningSceneInterface setEndEffectorLink("TCP"); //NOtE: THIS CAN BE ANY FRAME ON THE ENDEFFECTOR
   move_group.setPoseReferenceFrame("table");
+  geometry_msgs::Pose table_pose;
   move_group.startStateMonitor();
 
   //get acces to action lib
@@ -76,7 +77,7 @@ int main(int argc, char **argv) {
                 move_group.execute(Plan);
 
                 ROS_INFO("Robot is + %d cm above marker",i*2);
-                data.locate_tcp(actions.transformToPose(data.avg[0]));
+                data.locate_tcp(table_pose);
 
                 ROS_INFO("Waiting .5 sec before moving on");
                 ros::Duration(0.5).sleep();

@@ -199,7 +199,7 @@ int main(int argc, char **argv)
   instance.load_param();
   //Setup publisher and subscriber
 
-  ros::Subscriber sub = instance.nh.subscribe("/camera/color/image_raw/compressed", 30, &markers::imageCallback,&instance);
+  ros::Subscriber sub = instance.nh.subscribe("/camera/color/image_raw/compressed", 300, &markers::imageCallback,&instance);
   ros::ServiceServer service = instance.nh.advertiseService("get_marker", &markers::service_get_marker,&instance);
 
   ros::spin();
