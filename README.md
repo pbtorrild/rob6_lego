@@ -6,7 +6,7 @@ Under here is a list of improvements in order to create a more stable, secure, a
 ### Structure of the program
 
 ### The camera system
-..* Major lag was found using rviz to visualice the camera topic. The setup is made to run at 30 fps, this is clearly not the case, making deteections of the markser a lot harder
+* Major lag was found using rviz to visualice the camera topic. The setup is made to run at 30 fps, this is clearly not the case, making deteections of the markser a lot harder
 
 ### The moveit package
 
