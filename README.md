@@ -13,7 +13,9 @@ Under here is a list of improvements in order to create a more stable, secure, a
 **Summery**
 The control algorithm required a lot of work in order to improve the stability of the planning.
 The robot model was updated to accommodate the 5 cm gap previously unknown and the removal of the force torque sensor.
+
 ![Image from RViz showing how wrong the modeling can be](https://github.com/pbtorrild/rob6_lego/blob/master/images/marker_detection.png)
+
 ### Structure of the program
 To ease the computational power required to run the package, an entirely new control algorithm was written.  
 ### The camera system
@@ -38,7 +40,7 @@ ERROR [140076919019264] (global_timestamp_reader.cpp:188) Error during time_diff
 
 ### The moveit package
 
-  _the planner often failed and could not do simple motions such as going to the marker after_
+* the planner often failed and could not do simple motions such as going to the marker after
 
 ```bash
 [ WARN] [1589885494.085382272]: "marker_0" passed to lookupTransform argument source_frame does not exist.
@@ -55,3 +57,8 @@ ERROR [140076919019264] (global_timestamp_reader.cpp:188) Error during time_diff
 
 ### The robot describtion package
 * Here multiple arrors was found. The robot was standing on a 5 cm offset
+* Wrong joint limits on the shoulder joint
+```bash
+[ WARN] [1589891800.794733445]: Joint 'shoulder_pan_joint' from the starting state is outside bounds by a significant margin: [ -0.480171 ] should be in the range [ 0 ], [ 6.28319 ] but the error above the ~start_state_max_bounds_error parameter (currently set to 0.1)
+
+```
