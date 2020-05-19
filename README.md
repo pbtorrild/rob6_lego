@@ -1,5 +1,11 @@
 # rob6_lego
-This is a continuation of the project created by the robotics group 65 at aalborg universety in teh fall of 2016 [link](https://github.com/pbtorrild/rob5_lego)
+This is a continuation of the project created by the robotics group 65 at Aalborg University in the fall of 2016 [link](https://github.com/pbtorrild/rob5_lego)
+## How to use the package
+
+To enable connection to the robot run:
+```bash
+roslaunch commander bringup.launch
+```
 
 ## IMPROVEMENTS FROM LAST SEMESTER
 Under here is a list of improvements in order to create a more stable, secure, and user-friendly solution
