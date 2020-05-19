@@ -11,7 +11,9 @@ roslaunch commander bringup.launch
 Under here is a list of improvements in order to create a more stable, secure, and user-friendly solution.
 
 **Summery**
-The control algorithm required a lot of work in order to improve the
+The control algorithm required a lot of work in order to improve the stability of the planning.
+The robot model was updated to accommodate the 5 cm gap previously unknown and the removal of the force torque sensor.
+![Image from RViz showing how wrong the modeling can be](https://github.com/pbtorrild/rob6_lego/images/marker_detection.png)
 ### Structure of the program
 To ease the computational power required to run the package, an entirely new control algorithm was written.  
 ### The camera system
