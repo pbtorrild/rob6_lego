@@ -18,7 +18,14 @@ The robot model was updated to accommodate the 5 cm gap previously unknown and t
 To ease the computational power required to run the package, an entirely new control algorithm was written.  
 ### The camera system
 * Major lag was found using rviz to visualize the camera topic. The setup is made to run at 30 fps, this is clearly not the case, making detections of the markers a lot harder.
-* The calibration is impossible fast this does point to the average filter not working. This can have multiple causes, either bad tf, not enough detections, a mess-up when storing the tf's or one detection is published multiple times.
+* The calibration is impossible fast this does point to the average filter not working. This can have multiple causes, either bad tf, not enough detections, a mess-up when storing the tf's or one detection is published multiple times. From the errors below the time of calibration was 5.47s in that time only 161 frames had passed the camera, not the **1200** frames as the code suggests.
+```bash
+[ INFO] [1589890761.572663907]: Starting Calibration (Part 1 of 2)
+[ INFO] [1589890764.072875767]: Starting Calibration (Part 2 of 2)
+[ INFO] [1589890766.573047402]: Calibrating...
+[ INFO] [1589890767.052378015]: Done
+
+```
 * The camera launch file was running too many topics, creating a hardware overflow, causing the aforementioned lag and was fixed by disabling every ability of the camera except depth and color.
 ```bash
 WARNING [140076919019264] (types.cpp:49) set_xu(ctrl=1) failed! Last Error: Input/output error
