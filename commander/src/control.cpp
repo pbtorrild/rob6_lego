@@ -86,7 +86,7 @@ int main(int argc, char **argv) {
               Plan=actions.go_above_marker(move_group.getName(),0,data.avg[0]);
               move_group.execute(Plan);
               while (ros::ok()) {
-                data.locate_tcp(data.transformToPose(data.latest[0]));
+                data.data_extractor(data.transformToPose(data.latest[0]),table_pose);
                 ros::Duration(0.035).sleep();
               }break;
     }

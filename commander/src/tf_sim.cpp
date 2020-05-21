@@ -69,7 +69,7 @@ int main(int argc, char **argv) {
   marker.header.frame_id="table";
   marker.child_frame_id="marker_0";
   marker.translation.x=0.4055;
-  marker.translation.y=-0.4;
+  marker.translation.y=0.15;
   marker.translation.z=0.00;
   marker.orientation.Roll=0;
   marker.orientation.Pitch=0;

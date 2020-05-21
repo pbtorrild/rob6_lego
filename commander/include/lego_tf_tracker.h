@@ -116,6 +116,11 @@ public:
     send_data(tcp_location,goal);
   }
 
+  void data_extractor(geometry_msgs::Pose start,geometry_msgs::Pose goal) {
+
+    send_data(start,goal);
+  }
+
   geometry_msgs::Pose transformToPose(geometry_msgs::TransformStamped transfrom_in) {
     geometry_msgs::Pose Pose;
     Pose.position.x = transfrom_in.transform.translation.x;

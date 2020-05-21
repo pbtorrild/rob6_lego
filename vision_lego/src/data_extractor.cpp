@@ -33,7 +33,7 @@ public:
 ros::NodeHandle nh;
 //the frame tracker
 data():
-  tf2_(buffer_),  target_frame_("Base")
+  tf2_(buffer_),  target_frame_("table")
   {
 
   }

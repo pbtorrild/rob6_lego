@@ -87,7 +87,7 @@ public:
     marker.transform.rotation.z = q.z();
     marker.transform.rotation.w = q.w();
 
-    geometry_msgs::Pose marker_pose=get_relative_pose(0.05049,0.0175,0.2,marker);
+    geometry_msgs::Pose marker_pose=get_relative_pose(0.050616,0.0323063,0.2,marker);
 
     bool planning_success;
     do {
@@ -202,13 +202,13 @@ public:
     geometry_msgs::Pose marker_pose;
 
     switch (height) {
-      case 0: marker_pose=get_relative_pose(0.05049,0.0175,0.01+height*0.02,marker);
+      case 0: marker_pose=get_relative_pose(0.050616,0.0323063,0.005+height*0.02,marker);
               latest_pose=marker_pose; break;
-      case 1: marker_pose=get_relative_pose(0.05049,0.0175,0.01+height*0.02,marker);
+      case 1: marker_pose=get_relative_pose(0.050616,0.0323063,0.005+height*0.02,marker);
               latest_pose=marker_pose; break;
-      case 2: marker_pose=get_relative_pose(0.05049,0.0175,0.01+height*0.02,marker);
+      case 2: marker_pose=get_relative_pose(0.050616,0.0323063,0.005+height*0.02,marker);
               latest_pose=marker_pose; break;
-      case 3: marker_pose=get_relative_pose(0.05049,0.0175,0.01+height*0.02,marker);
+      case 3: marker_pose=get_relative_pose(0.050616,0.0323063,0.005+height*0.02,marker);
               latest_pose=marker_pose; break;
     }
 
