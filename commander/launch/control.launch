@@ -1,5 +1,6 @@
 <launch>
   <param name="test_mode" type="int" value="2" />
+  
   <node pkg="commander" type="control" name="control" output="screen"></node>
 
   <node pkg="commander" type="pose_finder" name="pose_finder" output="screen"></node>

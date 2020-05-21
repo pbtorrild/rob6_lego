@@ -148,11 +148,11 @@ public:
     //calculate the new translation
     double a11 = cos_Y*cos_P;
     double a12 = cos_Y*sin_P*sin_R-sin_Y*cos_R;
-    double a13 = sin_Y*sin_P*cos_R+sin_Y*sin_R;
+    double a13 = cos_Y*sin_P*cos_R+sin_Y*sin_R;
 
     double a21 = sin_Y*cos_P;
-    double a22 = sin_Y*sin_P*sin_R-cos_Y*cos_R;
-    double a23 = sin_Y*sin_P*cos_R+cos_Y*sin_R;
+    double a22 = sin_Y*sin_P*sin_R+cos_Y*cos_R;
+    double a23 = sin_Y*sin_P*cos_R-cos_Y*sin_R;
 
     double a31 = -sin_P;
     double a32 = cos_P*sin_R;

@@ -1,9 +1,9 @@
 <launch>
 
   <!-- the self made files -->
-  <param name="sample_size" type="int" value="1000" />
+  <param name="sample_size" type="int" value="100" />
   <param name="file_path" type="str" value="/home/peter/Desktop/" />
-  <param name="file_name" type="str" value="camera_precisiton_test_new.csv" />
+  <param name="file_name" type="str" value="sim_data_for_peter.csv" />
   <param name="separator" type="str" value=";" />
   <node pkg="commander" type="pose_data_extractor" name="pose_data_extractor" output="screen"></node>
 
