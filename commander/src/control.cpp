@@ -82,6 +82,13 @@ int main(int argc, char **argv) {
                 ROS_INFO("Waiting .5 sec before moving on");
                 ros::Duration(0.5).sleep();
               } break;
+      case 2: //Default stationary for cam test
+              Plan=actions.go_above_marker(move_group.getName(),0,data.avg[0]);
+              move_group.execute(Plan);
+              while (ros::ok()) {
+                data.locate_tcp(data.transformToPose(data.latest[0]));
+                ros::Duration(0.035).sleep();
+              }break;
     }
   }
 
