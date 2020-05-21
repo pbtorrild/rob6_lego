@@ -86,7 +86,10 @@ public:
    int id_num = std::stoi(frame_id);
    //read avg translation
    avg[id_num]=msg;
-   avg_marker_found[id_num] = true;
+   if (msg.header.seq>=1) {
+     avg_marker_found[id_num] = true;
+   }
+
 
  }
   void latest_transform(geometry_msgs::TransformStamped msg){
@@ -111,7 +114,7 @@ public:
     }
 
     //Get as pose
-    geometry_msgs::Pose tcp_location = transformToPose(tcp_location_transform);
+    geometry_msgs::Pose tcp_location = transformToPose(latest[0]);
 
     send_data(tcp_location,goal);
   }

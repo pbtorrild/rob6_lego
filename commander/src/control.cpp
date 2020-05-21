@@ -29,6 +29,7 @@ int main(int argc, char **argv) {
   moveit::planning_interface::PlanningSceneInterface setEndEffectorLink("TCP"); //NOtE: THIS CAN BE ANY FRAME ON THE ENDEFFECTOR
   move_group.setPoseReferenceFrame("table");
   geometry_msgs::Pose table_pose;
+  table_pose.orientation.w=1;
   move_group.startStateMonitor();
 
   //get acces to action lib
@@ -81,6 +82,16 @@ int main(int argc, char **argv) {
 
                 ROS_INFO("Waiting .5 sec before moving on");
                 ros::Duration(0.5).sleep();
+              } break;
+      case 2: //Default tf_test
+              for (int i = 0; i < 4 && ros::ok(); i++){
+              int data_send_counter;
+                Plan=actions.go_above_marker(move_group.getName(),3,data.avg[0]);
+                move_group.execute(Plan);
+                while (ros::ok()&&data_send_counter <= 1000) {
+                  data.locate_tcp(table_pose);
+                  ros::Duration(0.04).sleep();
+                }
               } break;
     }
   }

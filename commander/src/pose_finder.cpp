@@ -42,6 +42,7 @@ private:
   std::vector<cv::Point3f> Point;
   std::vector<std::vector<cv::Point3f>> avg; //Create vector of ids containg a vector of size 4 each containing a cv point 3f
   std::vector<int> counter;
+  std::vector<int> avg_counter;
 
   //Vector containg the avg_pos of the markers
   std::vector<geometry_msgs::Transform> avg_pos;
@@ -80,6 +81,7 @@ public:
     Point = decltype(Point)(2);
     avg = decltype(avg)(num_markers,Point); //Create vector of ids containg a vector of size 4 each containing a cv point 3f
     counter =decltype(counter)(num_markers);
+    avg_counter =decltype(avg_counter)(num_markers);
 
     //Vector containg the avg_pos of the markers
     avg_pos = decltype(avg_pos)(num_markers);
@@ -174,27 +176,58 @@ public:
 
      if (counter[id_num]==avg_gate) {
 
-       //set avg trans
-       float tx_avg=avg[id_num][0].x/avg_gate;
-       float ty_avg=avg[id_num][0].y/avg_gate;
-       float tz_avg=avg[id_num][0].z/avg_gate;
-       //set avg rotation
-       float rx_avg=avg[id_num][1].x/avg_gate;
-       float ry_avg=avg[id_num][1].y/avg_gate;
-       float rz_avg=avg[id_num][1].z/avg_gate;
+       if (avg_counter[id_num]<=2) {
+         //set avg trans
+         float tx_avg=avg[id_num][0].x/avg_gate;
+         float ty_avg=avg[id_num][0].y/avg_gate;
+         float tz_avg=avg[id_num][0].z/avg_gate;
+         //set avg rotation
+         float rx_avg=avg[id_num][1].x/avg_gate;
+         float ry_avg=avg[id_num][1].y/avg_gate;
+         float rz_avg=avg[id_num][1].z/avg_gate;
 
-       //Set avg pos
+         //Set avg pos
 
-       avg_pos[id_num].translation.x = tx_avg;
-       avg_pos[id_num].translation.y = ty_avg;
-       avg_pos[id_num].translation.z = tz_avg;
+         avg_pos[id_num].translation.x = tx_avg;
+         avg_pos[id_num].translation.y = ty_avg;
+         avg_pos[id_num].translation.z = tz_avg;
 
-       tf2::Quaternion Q;
-       Q.setRPY(rx_avg,ry_avg,rz_avg);
-       avg_pos[id_num].rotation.x = Q.x();
-       avg_pos[id_num].rotation.y = Q.y();
-       avg_pos[id_num].rotation.z = Q.z();
-       avg_pos[id_num].rotation.w = Q.w();
+         tf2::Quaternion Q;
+         Q.setRPY(rx_avg,ry_avg,rz_avg);
+         avg_pos[id_num].rotation.x = Q.x();
+         avg_pos[id_num].rotation.y = Q.y();
+         avg_pos[id_num].rotation.z = Q.z();
+         avg_pos[id_num].rotation.w = Q.w();
+
+         //Find the 6 dimentional euclidian distance
+         //to each of the values in the running_values inorder to find
+         //the value closest to the avg i.e the Mean diviation
+         double smallest_distance;
+         geometry_msgs::Transform smallest_mad;
+         for (int i = 0; i < avg_gate && ros::ok(); i++) {
+
+           double dx=std::pow((tx_avg-running_values[id_num][i].translation.x),2);
+           double dy=std::pow((ty_avg-running_values[id_num][i].translation.y),2);
+           double dz=std::pow((tz_avg-running_values[id_num][i].translation.z),2);
+
+           double R, P, Y;
+           tf2::Quaternion q_(running_values[id_num][i].rotation.x,running_values[id_num][i].rotation.y,running_values[id_num][i].rotation.z,running_values[id_num][i].rotation.w);
+           tf2::Matrix3x3 matrix_(q_);
+           matrix_.getRPY(R,P,Y);
+
+           double dR=std::pow((rx_avg-R),2);
+           double dP=std::pow((ry_avg-P),2);
+           double dY=std::pow((rz_avg-Y),2);
+
+           double distance = std::pow(dx+dy+dz+dR+dP+dY,1/6);
+           if (distance<=smallest_distance || i==0) {
+             smallest_distance=distance;
+             smallest_mad=running_values[id_num][i];
+           }
+         }
+         publish_smallest_mad(smallest_mad);
+       }
+       avg_counter[id_num]++;
        broadcast_frame(avg_pos[id_num],id_num);
        publish_avg(avg_pos[id_num],id_num);
        if (marker_found[id_num]!=true) {
@@ -202,34 +235,7 @@ public:
        }
        marker_found[id_num]=true;
 
-       //Find the 6 dimentional euclidian distance
-       //to each of the values in the running_values inorder to find
-       //the value closest to the avg i.e the Mean diviation
-       double smallest_distance;
-       geometry_msgs::Transform smallest_mad;
-       for (int i = 0; i < avg_gate && ros::ok(); i++) {
 
-         double dx=std::pow((tx_avg-running_values[id_num][i].translation.x),2);
-         double dy=std::pow((ty_avg-running_values[id_num][i].translation.y),2);
-         double dz=std::pow((tz_avg-running_values[id_num][i].translation.z),2);
-
-         double R, P, Y;
-         tf2::Quaternion q_(running_values[id_num][i].rotation.x,running_values[id_num][i].rotation.y,running_values[id_num][i].rotation.z,running_values[id_num][i].rotation.w);
-         tf2::Matrix3x3 matrix_(q_);
-         matrix_.getRPY(R,P,Y);
-
-         double dR=std::pow((rx_avg-R),2);
-         double dP=std::pow((ry_avg-P),2);
-         double dY=std::pow((rz_avg-Y),2);
-
-         double distance = std::pow(dx+dy+dz+dR+dP+dY,1/6);
-         if (distance<=smallest_distance || i==0) {
-           smallest_distance=distance;
-           smallest_mad=running_values[id_num][i];
-         }
-
-       }
-       publish_smallest_mad(smallest_mad);
 
        //Reset
        reset_all(id_num);

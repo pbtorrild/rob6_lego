@@ -37,7 +37,7 @@ public:
                 joint_group_positions[1] = -M_PI/2;
                 joint_group_positions[2] = -M_PI/2;
                 joint_group_positions[3] = -M_PI/2;
-                joint_group_positions[4] = M_PI/2;
+                joint_group_positions[4] = -3*M_PI/2;
                 joint_group_positions[5] = 0;
                 move_group.setJointValueTarget(joint_group_positions);
                 planning_success = (move_group.plan(search) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
@@ -54,7 +54,7 @@ public:
                 joint_group_positions[1] = -M_PI/2;
                 joint_group_positions[2] = -M_PI/2;
                 joint_group_positions[3] = -M_PI/2;
-                joint_group_positions[4] = M_PI/2;
+                joint_group_positions[4] = -3*M_PI/2;
                 joint_group_positions[5] = 0;
                 move_group.setJointValueTarget(joint_group_positions);
                 planning_success = (move_group.plan(search) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
