@@ -39,6 +39,7 @@ public:
   //Two vectirs containng the transposes of the running average and the latest markers
   std::vector<geometry_msgs::TransformStamped> avg; //Create vector of ids containg a vector of size 4 each containing a cv point 3f
   std::vector<geometry_msgs::TransformStamped> latest;
+  std::vector<geometry_msgs::TransformStamped> calibrated_marker;
 
   //Vector containg weather or not the markers are found
   std::vector<bool> marker_found;
@@ -64,7 +65,8 @@ public:
   void declare_values() {
 
     avg = decltype(avg)(num_markers);
-    latest = decltype(avg)(num_markers);
+    latest = decltype(latest)(num_markers);
+    calibrated_marker = decltype(calibrated_marker)(num_markers);
 
     //Vector containg the avg_pos of the markers
     marker_found =decltype(marker_found)(num_markers);

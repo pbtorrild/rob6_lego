@@ -50,19 +50,43 @@ int main(int argc, char **argv) {
   Plan=actions.go_to_marker(move_group.getName(),data.latest[0]);
   move_group.execute(Plan);
 
-  ROS_INFO("Calibrating based on avg pos");
-
+  ROS_INFO("Doing intial calibration");
   do {
-    ros::Duration(3).sleep();
+    ros::Duration(0.3).sleep();
   } while( data.avg_marker_found[0]==false && ros::ok());
 
-  ROS_INFO("Done Calibrating");
+  ROS_INFO("The precise calibration is begon");
+  //Go to the position where the calibration is precise
+  //here we want to be sure all the data is from this positon therefore we wait
+  //the 2 next averages to come in before we are satisfied
+  Plan=actions.precision_calibration(move_group.getName(),data.avg[0]);
+  move_group.execute(Plan);
+  int avg_seq_num = data.avg[0].header.seq;
+  int avg_in_counter;
+  do {
+    ros::Duration(0.3).sleep();
+    avg_in_counter=data.avg[0].header.seq;
+  } while(ros::ok() && avg_in_counter<avg_seq_num+2);
+  data.calibrated_marker[0]=data.avg[0];
+  double R,P,Y;
+  tf2::Quaternion q(data.calibrated_marker[0].transform.rotation.x,data.calibrated_marker[0].transform.rotation.y,data.calibrated_marker[0].transform.rotation.z,data.calibrated_marker[0].transform.rotation.w);
+  tf2::Matrix3x3 matrix(q);
+  matrix.getRPY(R,P,Y);
+
+  ROS_INFO("----------- Calibration DONE -----------");
+  ROS_INFO(" ");
+  ROS_INFO("POSITION:(%F,%F,%F)",data.calibrated_marker[0].transform.translation.x,data.calibrated_marker[0].transform.translation.y,data.calibrated_marker[0].transform.translation.z);
+  ROS_INFO("ROTATION:(%F,%F,%F)",R,P,Y);
+  ROS_INFO(" ");
+  ROS_INFO("----------------------------------------");
+
+
 
   while (ros::ok()) {
     switch (data.test_mode) {
       case 0: //Default go to stick mode
               for (int i = 0; i < 4 && ros::ok(); i++) {
-                Plan=actions.go_to_stick(move_group.getName(),i,data.avg[0]);
+                Plan=actions.go_to_stick(move_group.getName(),i,data.calibrated_marker[0]);
                 move_group.execute(Plan);
 
                 ROS_INFO("Robot is @Calibration stick number %d",i);
@@ -73,7 +97,7 @@ int main(int argc, char **argv) {
             } break;
       case 1: //Default tf_test
               for (int i = 0; i < 4 && ros::ok(); i++) {
-                Plan=actions.go_above_marker(move_group.getName(),i,data.avg[0]);
+                Plan=actions.go_above_marker(move_group.getName(),i,data.calibrated_marker[0]);
                 move_group.execute(Plan);
 
                 ROS_INFO("Robot is + %d cm above marker",i*2);
@@ -83,10 +107,10 @@ int main(int argc, char **argv) {
                 ros::Duration(0.5).sleep();
               } break;
       case 2: //Default stationary for cam test
-              Plan=actions.go_above_marker(move_group.getName(),0,data.avg[0]);
+              Plan=actions.go_above_marker(move_group.getName(),0,data.calibrated_marker[0]);
               move_group.execute(Plan);
               while (ros::ok()) {
-                data.data_extractor(data.transformToPose(data.latest[0]),table_pose);
+                data.data_extractor(data.transformToPose(data.calibrated_marker[0]),table_pose);
                 ros::Duration(0.035).sleep();
               }break;
     }

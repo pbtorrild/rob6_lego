@@ -202,15 +202,49 @@ public:
     geometry_msgs::Pose marker_pose;
 
     switch (height) {
-      case 0: marker_pose=get_relative_pose(0.050616,0.0323063,0.005+height*0.02,marker);
+      case 0: marker_pose=get_relative_pose(0.050616,0.0323063,0.05+height*0.01,marker);
               latest_pose=marker_pose; break;
-      case 1: marker_pose=get_relative_pose(0.050616,0.0323063,0.005+height*0.02,marker);
+      case 1: marker_pose=get_relative_pose(0.050616,0.0323063,0.05+height*0.01,marker);
               latest_pose=marker_pose; break;
-      case 2: marker_pose=get_relative_pose(0.050616,0.0323063,0.005+height*0.02,marker);
+      case 2: marker_pose=get_relative_pose(0.050616,0.0323063,0.05+height*0.01,marker);
               latest_pose=marker_pose; break;
-      case 3: marker_pose=get_relative_pose(0.050616,0.0323063,0.005+height*0.02,marker);
+      case 3: marker_pose=get_relative_pose(0.050616,0.0323063,0.05+height*0.01,marker);
               latest_pose=marker_pose; break;
     }
+
+    bool planning_success;
+    do {
+      move_group.setPoseTarget(marker_pose,"TCP");
+      planning_success = (move_group.plan(plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+
+      if (planning_success==false) {
+        ROS_ERROR("Planning failed miserably :(");
+        break;
+      } else{
+        return plan;
+      }
+    } while(planning_success!=true && ros::ok());
+
+  }
+
+  moveit::planning_interface::MoveGroupInterface::Plan precision_calibration(std::string name,geometry_msgs::TransformStamped marker){
+    moveit::planning_interface::MoveGroupInterface move_group(name);
+    moveit::planning_interface::MoveGroupInterface::Plan plan;
+    //get marker pose the releavtive pose is the translation to the camera frame
+    //with 45 deg ritation
+    double R,P,Y;
+    tf2::Quaternion q(marker.transform.rotation.x,marker.transform.rotation.y,marker.transform.rotation.z,marker.transform.rotation.w);
+    tf2::Matrix3x3 matrix(q);
+    matrix.getRPY(R,P,Y);
+    Y+=M_PI/4;
+    q.setRPY(R,P,Y);
+    marker.transform.rotation.x = q.x();
+    marker.transform.rotation.y = q.y();
+    marker.transform.rotation.z = q.z();
+    marker.transform.rotation.w = q.w();
+    //get marker pose
+    geometry_msgs::Pose marker_pose = get_relative_pose(0.050616,0.0323063,0.005,marker);
+
 
     bool planning_success;
     do {
