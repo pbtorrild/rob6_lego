@@ -202,13 +202,13 @@ public:
     geometry_msgs::Pose marker_pose;
 
     switch (height) {
-      case 0: marker_pose=get_relative_pose(0.050616,0.0323063,0.05+height*0.01,marker);
+      case 0: marker_pose=get_relative_pose(0.050616,0.0323063,0.1+height*0.02,marker);
               latest_pose=marker_pose; break;
-      case 1: marker_pose=get_relative_pose(0.050616,0.0323063,0.05+height*0.01,marker);
+      case 1: marker_pose=get_relative_pose(0.050616,0.0323063,0.1+height*0.02,marker);
               latest_pose=marker_pose; break;
-      case 2: marker_pose=get_relative_pose(0.050616,0.0323063,0.05+height*0.01,marker);
+      case 2: marker_pose=get_relative_pose(0.050616,0.0323063,0.1+height*0.02,marker);
               latest_pose=marker_pose; break;
-      case 3: marker_pose=get_relative_pose(0.050616,0.0323063,0.05+height*0.01,marker);
+      case 3: marker_pose=get_relative_pose(0.050616,0.0323063,0.1+height*0.02,marker);
               latest_pose=marker_pose; break;
     }
 

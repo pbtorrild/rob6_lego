@@ -107,10 +107,10 @@ int main(int argc, char **argv) {
                 ros::Duration(0.5).sleep();
               } break;
       case 2: //Default stationary for cam test
-              Plan=actions.go_above_marker(move_group.getName(),0,data.calibrated_marker[0]);
+              Plan=actions.go_above_marker(move_group.getName(),2,data.calibrated_marker[0]);
               move_group.execute(Plan);
               while (ros::ok()) {
-                data.data_extractor(data.transformToPose(data.calibrated_marker[0]),table_pose);
+                data.data_extractor(data.transformToPose(data.latest[0]),table_pose);
                 ros::Duration(0.035).sleep();
               }break;
     }
