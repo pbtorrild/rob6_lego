@@ -1,5 +1,5 @@
 # rob6_lego
-This is a continuation of the project created by the robotics group 65 at Aalborg University in the fall of 2016 [link](https://github.com/pbtorrild/rob5_lego)
+This is a continuation of the project created by the robotics group 65 at Aalborg University in the fall of 2019 [link](https://github.com/pbtorrild/rob5_lego)
 ## How to use the package
 ### Launch files
 To enable connection to the robot run:
