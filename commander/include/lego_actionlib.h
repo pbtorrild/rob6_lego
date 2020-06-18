@@ -15,7 +15,7 @@
 #include <geometry_msgs/Pose.h>
 
 
-struct lego_actionlib{
+class lego_actionlib{
 private:
   //initialize state machine
   int search_state_machine=0;
@@ -24,8 +24,9 @@ protected:
 public:
   geometry_msgs::Pose latest_pose;
 
-  moveit::planning_interface::MoveGroupInterface::Plan marker_search(std::string name){
-    moveit::planning_interface::MoveGroupInterface move_group(name);
+
+  //functions down below:
+  moveit::planning_interface::MoveGroupInterface::Plan marker_search(moveit::planning_interface::MoveGroupInterface& move_group){
     //initialize the movement plan
     moveit::planning_interface::MoveGroupInterface::Plan search;
     //initialize the vector containing joint positions
@@ -71,8 +72,8 @@ public:
     } while(planning_success!=true && ros::ok());
   }
 
-  moveit::planning_interface::MoveGroupInterface::Plan go_to_marker(std::string name,geometry_msgs::TransformStamped marker){
-    moveit::planning_interface::MoveGroupInterface move_group(name);
+  moveit::planning_interface::MoveGroupInterface::Plan go_to_marker(moveit::planning_interface::MoveGroupInterface& move_group,geometry_msgs::TransformStamped marker){
+
     moveit::planning_interface::MoveGroupInterface::Plan plan;
     //get marker pose the releavtive pose is the translation to the camera frame
     //with 45 deg ritation
@@ -103,8 +104,8 @@ public:
     } while(planning_success!=true && ros::ok());
 
   }
-  moveit::planning_interface::MoveGroupInterface::Plan go_to_stick(std::string name,int stick_num ,geometry_msgs::TransformStamped marker){
-    moveit::planning_interface::MoveGroupInterface move_group(name);
+  moveit::planning_interface::MoveGroupInterface::Plan go_to_stick(moveit::planning_interface::MoveGroupInterface& move_group,int stick_num ,geometry_msgs::TransformStamped marker){
+
     moveit::planning_interface::MoveGroupInterface::Plan plan;
     //get marker pose
     geometry_msgs::Pose marker_pose;
@@ -183,8 +184,8 @@ public:
     return Pose;
   }
 
-  moveit::planning_interface::MoveGroupInterface::Plan go_above_marker(std::string name,int height ,geometry_msgs::TransformStamped marker){
-    moveit::planning_interface::MoveGroupInterface move_group(name);
+  moveit::planning_interface::MoveGroupInterface::Plan go_above_marker(moveit::planning_interface::MoveGroupInterface& move_group,int height ,geometry_msgs::TransformStamped marker){
+
     moveit::planning_interface::MoveGroupInterface::Plan plan;
     //get marker pose the releavtive pose is the translation to the camera frame
     //with 45 deg ritation
@@ -227,8 +228,8 @@ public:
 
   }
 
-  moveit::planning_interface::MoveGroupInterface::Plan precision_calibration(std::string name,geometry_msgs::TransformStamped marker){
-    moveit::planning_interface::MoveGroupInterface move_group(name);
+  moveit::planning_interface::MoveGroupInterface::Plan precision_calibration(moveit::planning_interface::MoveGroupInterface& move_group,geometry_msgs::TransformStamped marker){
+
     moveit::planning_interface::MoveGroupInterface::Plan plan;
     //get marker pose the releavtive pose is the translation to the camera frame
     //with 45 deg ritation
@@ -261,8 +262,62 @@ public:
 
   }
 
-};
 
+  moveit::planning_interface::MoveGroupInterface::Plan build_map_init(moveit::planning_interface::MoveGroupInterface& move_group, size_t i){
+
+    //initialize the movement plan
+    moveit::planning_interface::MoveGroupInterface::Plan search;
+    //initialize the vector containing joint positions
+    std::vector<double> joint_group_positions =decltype(joint_group_positions)(6);
+    bool planning_success;
+    joint_group_positions[0] = -M_PI/4;
+    joint_group_positions[1] = -M_PI/2;
+    joint_group_positions[2] = M_PI/2;
+    joint_group_positions[3] = -M_PI+0.01;
+    if (i%2==0) {
+      joint_group_positions[4] = -M_PI+0.01;
+    }else{
+      joint_group_positions[4] = M_PI-0.01;
+    }
+    joint_group_positions[5] = 0;
+
+    move_group.setJointValueTarget(joint_group_positions);
+
+    planning_success = (move_group.plan(search) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+    if (planning_success==false) {
+      ROS_ERROR("Planning failed miserably :(");
+    } else{
+      return search;
+    }
+  }
+  moveit::planning_interface::MoveGroupInterface::Plan build_map_final(moveit::planning_interface::MoveGroupInterface& move_group, size_t i){
+
+    //initialize the movement plan
+    moveit::planning_interface::MoveGroupInterface::Plan search;
+    //initialize the vector containing joint positions
+    std::vector<double> joint_group_positions =decltype(joint_group_positions)(6);
+    bool planning_success;
+    if (i%2==0) {
+      joint_group_positions[0] = -M_PI+0.01;
+    }else{
+      joint_group_positions[1] = M_PI-0.01;
+    }
+    joint_group_positions[1] = -M_PI/2;
+    joint_group_positions[2] =  0;
+    joint_group_positions[3] = -M_PI+1/8*M_PI;
+    joint_group_positions[4] = M_PI/2;
+    joint_group_positions[5] = 0;
+
+    move_group.setJointValueTarget(joint_group_positions);
+
+    planning_success = (move_group.plan(search) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+    if (planning_success==false) {
+      ROS_ERROR("Planning failed miserably :(");
+    } else{
+      return search;
+    }
+  }
+};
 
 
 #endif

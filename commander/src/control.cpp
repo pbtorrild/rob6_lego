@@ -33,13 +33,23 @@ int main(int argc, char **argv) {
 
   //get acces to action lib
   lego_actionlib actions;
+  moveit::planning_interface::MoveGroupInterface::Plan Plan;
+
+  ROS_INFO("Building workspace");
+  //Build Map
+  for (size_t i = 0; i < 4 && ros::ok(); i++) {
+    Plan=actions.build_map_init( move_group,i);
+    move_group.execute(Plan);
+  }
+  for (size_t i = 0; i < 4 && ros::ok(); i++) {
+    Plan=actions.build_map_final(move_group,i);
+    move_group.execute(Plan);
+  }
 
   /*Seach for markers */
-  std::vector<double> joint_group_positions =decltype(joint_group_positions)(6);
-  moveit::planning_interface::MoveGroupInterface::Plan Plan;
   ROS_INFO("Searching for markers..");
   while(data.marker_found[0]!=true && ros::ok()){
-    Plan=actions.marker_search(move_group.getName());
+    Plan=actions.marker_search(move_group);
     move_group.execute(Plan);
   }
   ROS_INFO("Found marker with id: 0");
@@ -47,19 +57,19 @@ int main(int argc, char **argv) {
   //HOW TO ACCES TF DATA FOR THE MARKE IR2 WORLD
   //geometry_msgs::Transform Goal = data.latest[marker_id];
   ROS_INFO("Going to marker");
-  Plan=actions.go_to_marker(move_group.getName(),data.latest[0]);
+  Plan=actions.go_to_marker( move_group,data.latest[0]);
   move_group.execute(Plan);
 
-  ROS_INFO("Doing intial calibration");
+  ROS_INFO("Doing initial calibration");
   do {
     ros::Duration(0.3).sleep();
   } while( data.avg_marker_found[0]==false && ros::ok());
 
-  ROS_INFO("The precise calibration is begon");
+  ROS_INFO("The precise calibration has begun");
   //Go to the position where the calibration is precise
   //here we want to be sure all the data is from this positon therefore we wait
   //the 2 next averages to come in before we are satisfied
-  Plan=actions.precision_calibration(move_group.getName(),data.avg[0]);
+  Plan=actions.precision_calibration( move_group,data.avg[0]);
   move_group.execute(Plan);
   int avg_seq_num = data.avg[0].header.seq;
   int avg_in_counter;
@@ -73,6 +83,7 @@ int main(int argc, char **argv) {
   tf2::Matrix3x3 matrix(q);
   matrix.getRPY(R,P,Y);
 
+  ROS_INFO(" ");
   ROS_INFO("----------- Calibration DONE -----------");
   ROS_INFO(" ");
   ROS_INFO("POSITION:(%F,%F,%F)",data.calibrated_marker[0].transform.translation.x,data.calibrated_marker[0].transform.translation.y,data.calibrated_marker[0].transform.translation.z);
@@ -86,7 +97,7 @@ int main(int argc, char **argv) {
     switch (data.test_mode) {
       case 0: //Default go to stick mode
               for (int i = 0; i < 4 && ros::ok(); i++) {
-                Plan=actions.go_to_stick(move_group.getName(),i,data.calibrated_marker[0]);
+                Plan=actions.go_to_stick( move_group,i,data.calibrated_marker[0]);
                 move_group.execute(Plan);
 
                 ROS_INFO("Robot is @Calibration stick number %d",i);
@@ -97,7 +108,7 @@ int main(int argc, char **argv) {
             } break;
       case 1: //Default tf_test
               for (int i = 0; i < 4 && ros::ok(); i++) {
-                Plan=actions.go_above_marker(move_group.getName(),i,data.calibrated_marker[0]);
+                Plan=actions.go_above_marker( move_group,i,data.calibrated_marker[0]);
                 move_group.execute(Plan);
 
                 ROS_INFO("Robot is + %d cm above marker",i*2);
@@ -107,7 +118,7 @@ int main(int argc, char **argv) {
                 ros::Duration(0.5).sleep();
               } break;
       case 2: //Default stationary for cam test
-              Plan=actions.go_above_marker(move_group.getName(),2,data.calibrated_marker[0]);
+              Plan=actions.go_above_marker( move_group,2,data.calibrated_marker[0]);
               move_group.execute(Plan);
               while (ros::ok()) {
                 data.data_extractor(data.transformToPose(data.latest[0]),table_pose);
